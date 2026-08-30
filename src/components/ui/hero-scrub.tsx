@@ -17,10 +17,10 @@ const CARD_START_SCALE_MOBILE = 0.82;
 const MEDIA_PARALLAX_SCALE = 1.12;
 /**
  * Card height as a share of the viewport. The card keeps its full layout box
- * even while scaled down, so this has to leave room for both titles — at 0.72
- * the stack overflows a 900px-tall viewport and clips the lower word.
+ * even while scaled down, so this has to leave room for the wordmark and the
+ * oversized mark below it; too large a share clips the lower slot.
  */
-const CARD_VH = 0.54;
+const CARD_VH = 0.52;
 
 export type HeroScrubProps = {
   /** Always-rendered still. Doubles as the poster, the reduced-motion state and the frame-load fallback. */
@@ -31,13 +31,21 @@ export type HeroScrubProps = {
   posterSizes?: string;
   /** Accessible heading for the section. Rendered for assistive tech even though the visible words are decorative. */
   heading: string;
-  titleTop: string;
-  titleBottom: string;
+  /** Rendered as artwork, not read out: pass a string or a brand image. */
+  titleTop: React.ReactNode;
+  titleBottom: React.ReactNode;
   /** Optional canvas frame sequence. Omit both to run the choreography on the still alone. */
   frameCount?: number;
   frameUrl?: (index: number) => string;
   className?: string;
-  titleClassName?: string;
+  titleTopClassName?: string;
+  titleBottomClassName?: string;
+  /**
+   * Resting x-offset of the lower title, e.g. "14vw" to let an oversized mark
+   * overhang the right edge. The parting tween pulls it to 0 first, so the mark
+   * is briefly seen whole before it wipes off-screen.
+   */
+  titleBottomRestX?: string;
   accentHex?: string;
   defaultAspect?: number;
   children?: React.ReactNode;
@@ -68,8 +76,10 @@ export function HeroScrub({
   frameCount = 0,
   frameUrl,
   className,
-  titleClassName,
-  accentHex = "#12303f",
+  titleTopClassName,
+  titleBottomClassName,
+  titleBottomRestX = "0",
+  accentHex = "#11383b",
   defaultAspect = 16 / 9,
   children,
 }: HeroScrubProps) {
@@ -252,6 +262,7 @@ export function HeroScrub({
       };
 
       gsap.set(cardRef.current, { scale: startScale(), transformOrigin: "50% 50%" });
+      gsap.set(titleBottomRef.current, { x: titleBottomRestX });
 
       const master = gsap.timeline({
         scrollTrigger: {
@@ -276,21 +287,21 @@ export function HeroScrub({
         titleTopRef.current,
         {
           x: () => (window.innerWidth < 768 ? "-70vw" : "-60vw"),
-          letterSpacing: "0.02em",
           ease: "power2.inOut",
           duration: 0.15,
         },
         0,
       );
+      // Two stages: first slide the mark fully into frame, then wipe it right.
+      master.to(titleBottomRef.current, { x: 0, ease: "power2.out", duration: 0.06 }, 0);
       master.to(
         titleBottomRef.current,
         {
           x: () => (window.innerWidth < 768 ? "70vw" : "60vw"),
-          letterSpacing: "0.02em",
-          ease: "power2.inOut",
-          duration: 0.15,
+          ease: "power2.in",
+          duration: 0.09,
         },
-        0,
+        0.06,
       );
 
       // Phase 2 — immerse. Function values so `invalidateOnRefresh` recomputes
@@ -317,12 +328,12 @@ export function HeroScrub({
       master.to(mediaRef.current, { scale: 1, ease: "power3.inOut", duration: 0.22 }, 0.78);
       master.to(
         titleTopRef.current,
-        { x: 0, opacity: 1, letterSpacing: "-0.04em", ease: "power2.inOut", duration: 0.22 },
+        { x: 0, opacity: 1, ease: "power2.inOut", duration: 0.22 },
         0.78,
       );
       master.to(
         titleBottomRef.current,
-        { x: 0, opacity: 1, letterSpacing: "-0.04em", ease: "power2.inOut", duration: 0.22 },
+        { x: titleBottomRestX, opacity: 1, ease: "power2.inOut", duration: 0.22 },
         0.78,
       );
 
@@ -330,7 +341,7 @@ export function HeroScrub({
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [posterReady, reduced, aspect, frameCount]);
+  }, [posterReady, reduced, aspect, frameCount, titleBottomRestX]);
 
   // Under reduced motion the tall scroll track buys nothing, so collapse it.
   // Driven by CSS rather than the `reduced` state so that the server-rendered
@@ -381,15 +392,7 @@ export function HeroScrub({
           <span
             ref={titleTopRef}
             aria-hidden
-            className={cn(
-              "text-metal block font-display font-semibold uppercase italic",
-              titleClassName,
-            )}
-            style={{
-              fontSize: "clamp(3rem, 11vw, 9rem)",
-              lineHeight: 0.85,
-              letterSpacing: "-0.04em",
-            }}
+            className={cn("flex w-full justify-center", titleTopClassName)}
           >
             {titleTop}
           </span>
@@ -438,15 +441,7 @@ export function HeroScrub({
           <span
             ref={titleBottomRef}
             aria-hidden
-            className={cn(
-              "text-metal block font-display font-semibold uppercase italic",
-              titleClassName,
-            )}
-            style={{
-              fontSize: "clamp(3rem, 11vw, 9rem)",
-              lineHeight: 0.85,
-              letterSpacing: "-0.04em",
-            }}
+            className={cn("flex w-full justify-center", titleBottomClassName)}
           >
             {titleBottom}
           </span>

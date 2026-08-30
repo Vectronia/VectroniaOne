@@ -11,15 +11,15 @@
  * `--color-brand-amber` is usable as `bg-brand-amber`, `text-brand-amber`, ...
  */
 @theme {
-  /* --- Palette dots ------------------------------------------------- */
-  --color-brand-amber: #e9a73c;
-  --color-brand-teal: #1e6b62;
-  --color-brand-petrol: #12303f;
+  /* --- Palette dots (exact values from the brand layout) ------------- */
+  --color-brand-amber: #e5ad43;
+  --color-brand-teal: #11383b;
+  --color-brand-navy: #191c28;
 
   /* --- Surfaces ----------------------------------------------------- */
-  --color-ink: #0b1a26;
-  --color-ink-deep: #071119;
-  --color-surface: #102a38;
+  --color-ink: #11383b;
+  --color-ink-deep: #191c28;
+  --color-surface: #1c4245;
 
   /* --- Metallic ramp sampled from the logo -------------------------- */
   --color-rose-900: #4f3622;
@@ -49,10 +49,9 @@
 :root {
   --gradient-page: linear-gradient(
     180deg,
-    var(--color-ink-deep) 0%,
-    var(--color-ink) 42%,
-    var(--color-brand-petrol) 78%,
-    #12403f 100%
+    var(--color-brand-navy) 0%,
+    var(--color-brand-navy) 38%,
+    var(--color-brand-teal) 100%
   );
   --gradient-metal: linear-gradient(
     100deg,
