@@ -16,7 +16,8 @@ export type IntroPanelProps = {
   /** The same plate the hero shows, so it reads as one continuous object. */
   artwork: Artwork;
   header: string;
-  body?: string;
+  /** One entry per paragraph. */
+  body?: string[];
   id?: string;
   className?: string;
 };
@@ -110,7 +111,11 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
           >
             {header}
           </h2>
-          {body && <p className="mt-6 max-w-[52ch] text-fg-muted md:text-lg">{body}</p>}
+          {body?.map((paragraph) => (
+            <p key={paragraph} className="mt-6 max-w-[52ch] text-fg-muted md:text-lg">
+              {paragraph}
+            </p>
+          ))}
         </div>
       </div>
     </section>

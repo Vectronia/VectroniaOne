@@ -4,12 +4,12 @@ import { KineticGallery } from "@/components/ui/kinetic-gallery";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
 import { galleryArtworks, heroArtwork } from "@/data/artworks";
 
-/**
- * PLACEHOLDER — the real header lives in 1P1R1oaK.indd, whose story text is
- * held in a proprietary compressed stream that cannot be read outside
- * InDesign. Replace this string once the wording arrives.
- */
-const INTRO_HEADER = "Platzhalter-Header";
+const INTRO_HEADER = "Jedes Auto ist ein Unikat";
+
+const INTRO_BODY = [
+  "Jedes Auto trägt seine eigene Geschichte: wie es entstanden ist, welche Rekorde es gebrochen hat — oder schlicht, dass es immer einen Menschen gab, der sich vorgenommen hat, genau dieses eine zu besitzen. Durch Zufall, durch jahrelanges Sparen, durch die eigene Restauration.",
+  "Genau das hole ich in meine Einzelanfertigungen: jede Zeichnung ein Unikat, von Hand, für ein Fahrzeug. Und mit der Garantie, dass sie es bleibt — auch in der heutigen Entwicklung. So einzigartig wie die Autos selbst, ihre Besitzer und die gemeinsamen Abenteuer.",
+];
 
 /**
  * Both hero titles are brand artwork rather than text. They sit inside
@@ -66,7 +66,7 @@ export default function Home() {
         }
       />
 
-      <IntroPanel id="inhalt" artwork={heroArtwork} header={INTRO_HEADER} />
+      <IntroPanel id="inhalt" artwork={heroArtwork} header={INTRO_HEADER} body={INTRO_BODY} />
 
       <KineticGallery label="Werke" artworks={galleryArtworks} />
     </main>
