@@ -453,9 +453,20 @@ export function HeroScrub({
         <div
           ref={cueRef}
           aria-hidden
-          className="absolute right-6 bottom-6 z-10 text-[0.7rem] tracking-[0.35em] text-fg-muted uppercase motion-reduce:hidden"
+          className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-fg-muted motion-reduce:hidden"
         >
-          Scrollen
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 4v15M6 13l6 6 6-6" />
+          </svg>
         </div>
       </div>
     </section>

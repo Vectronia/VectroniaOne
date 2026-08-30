@@ -190,17 +190,27 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
             style={{ backgroundColor: `rgba(0, 0, 0, ${LIGHTBOX_SCRIM})` }}
             tabIndex={-1}
           />
-          {/* eslint-disable-next-line @next/next/no-img-element -- same renditions, shown at display size */}
-          <img
-            src={active.src}
-            srcSet={active.srcSet}
-            sizes="92vw"
-            alt={active.alt}
-            width={active.width}
-            height={active.height}
-            decoding="async"
-            className="relative max-h-full max-w-full rounded-sm object-contain shadow-[0_30px_120px_rgba(0,0,0,0.7)] ring-1 ring-white/15"
-          />
+          <figure className="relative flex max-h-full min-h-0 flex-col items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element -- same renditions, shown at display size */}
+            <img
+              src={active.src}
+              srcSet={active.srcSet}
+              sizes="92vw"
+              alt={active.alt}
+              width={active.width}
+              height={active.height}
+              decoding="async"
+              className="min-h-0 w-auto max-w-full flex-1 rounded-sm object-contain shadow-[0_30px_120px_rgba(0,0,0,0.7)] ring-1 ring-white/15"
+            />
+            <figcaption className="shrink-0 text-center">
+              <span className="font-display text-lg text-rose-200 italic md:text-2xl">
+                {active.title}
+              </span>
+              <span className="mt-0.5 block text-xs tracking-[0.18em] text-fg-muted uppercase">
+                {active.meta}
+              </span>
+            </figcaption>
+          </figure>
           <button
             ref={closeRef}
             type="button"
