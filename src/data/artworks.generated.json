@@ -1,0 +1,197 @@
+[
+  {
+    "slug": "tinte3",
+    "source": "Tinte3.psd",
+    "width": 3667,
+    "height": 2565,
+    "aspect": 1.4296,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch3-1",
+    "source": "Buch3_1.psd",
+    "width": 3246,
+    "height": 2363,
+    "aspect": 1.3737,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "tinte1",
+    "source": "Tinte1.psd",
+    "width": 3757,
+    "height": 2651,
+    "aspect": 1.4172,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch3",
+    "source": "Buch3.psd",
+    "width": 3143,
+    "height": 2133,
+    "aspect": 1.4735,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch4-5-2",
+    "source": "Buch4.5_2.psd",
+    "width": 3094,
+    "height": 2071,
+    "aspect": 1.494,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "l",
+    "source": "_l.psd",
+    "width": 3620,
+    "height": 2539,
+    "aspect": 1.4258,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch4-5-1",
+    "source": "Buch4.5_1.psd",
+    "width": 3345,
+    "height": 2379,
+    "aspect": 1.4061,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "skizze",
+    "source": "skizze.psd",
+    "width": 3327,
+    "height": 2107,
+    "aspect": 1.579,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch6-1",
+    "source": "Buch6_1.psd",
+    "width": 3410,
+    "height": 2405,
+    "aspect": 1.4179,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch4-5",
+    "source": "Buch4.5.psd",
+    "width": 3641,
+    "height": 2620,
+    "aspect": 1.3897,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "tinte2",
+    "source": "Tinte2.psd",
+    "width": 3621,
+    "height": 2535,
+    "aspect": 1.4284,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch6",
+    "source": "Buch6.psd",
+    "width": 3319,
+    "height": 2259,
+    "aspect": 1.4692,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch4",
+    "source": "Buch4.psd",
+    "width": 3213,
+    "height": 2133,
+    "aspect": 1.5063,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch8",
+    "source": "Buch8.psd",
+    "width": 3278,
+    "height": 2329,
+    "aspect": 1.4075,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  },
+  {
+    "slug": "buch5",
+    "source": "Buch5.psd",
+    "width": 3202,
+    "height": 2354,
+    "aspect": 1.3602,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2560
+    ]
+  }
+]

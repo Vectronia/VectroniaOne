@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/*
+ * Vectronia design tokens.
+ *
+ * Colors come from two sources that have to stay distinguishable:
+ *  - the three palette dots of the brand layout (amber / teal / petrol)
+ *  - the metallic ramp sampled out of the Illustrator logo (rose gold)
+ *
+ * Tailwind v4 turns every `--color-*` entry below into a utility, so
+ * `--color-brand-amber` is usable as `bg-brand-amber`, `text-brand-amber`, ...
+ */
+@theme {
+  /* --- Palette dots ------------------------------------------------- */
+  --color-brand-amber: #e9a73c;
+  --color-brand-teal: #1e6b62;
+  --color-brand-petrol: #12303f;
+
+  /* --- Surfaces ----------------------------------------------------- */
+  --color-ink: #0b1a26;
+  --color-ink-deep: #071119;
+  --color-surface: #102a38;
+
+  /* --- Metallic ramp sampled from the logo -------------------------- */
+  --color-rose-900: #4f3622;
+  --color-rose-700: #a5714a;
+  --color-rose-500: #cd976b;
+  --color-rose-300: #debb9e;
+  --color-rose-200: #ebd7c6;
+  --color-rose-100: #f8f0ea;
+
+  /* --- Foreground --------------------------------------------------- */
+  --color-fg: #f3ece5;
+  --color-fg-muted: #b9c6ce;
+
+  /* --- Type --------------------------------------------------------- */
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-body: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Motion ------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/*
+ * Brand gradients. Kept as plain custom properties (not `--color-*`) because
+ * they are images, not colors, and must not become color utilities.
+ */
+:root {
+  --gradient-page: linear-gradient(
+    180deg,
+    var(--color-ink-deep) 0%,
+    var(--color-ink) 42%,
+    var(--color-brand-petrol) 78%,
+    #12403f 100%
+  );
+  --gradient-metal: linear-gradient(
+    100deg,
+    var(--color-rose-700) 0%,
+    var(--color-rose-300) 22%,
+    var(--color-rose-100) 38%,
+    var(--color-rose-500) 58%,
+    var(--color-rose-200) 78%,
+    var(--color-rose-700) 100%
+  );
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Never override the user's OS-level motion preference. */
+    @media (prefers-reduced-motion: reduce) {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background: var(--color-ink-deep);
+    color: var(--color-fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+   * A single visible focus style for the whole site. Keyboard users need this;
+   * `:focus-visible` keeps it off pointer interactions.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-amber);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@utility text-metal {
+  background-image: var(--gradient-metal);
+  background-clip: text;
+  color: transparent;
+  /*
+   * Fallback for engines that drop `background-clip: text` — without this the
+   * heading renders invisible rather than merely unstyled.
+   */
+  @supports not (background-clip: text) {
+    background-image: none;
+    color: var(--color-rose-300);
+  }
+}
