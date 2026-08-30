@@ -88,7 +88,21 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
       aria-labelledby={id ? `${id}-header` : undefined}
       className={cn("relative w-full px-6 py-24 md:py-32", className)}
     >
-      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-16">
+      {/*
+       * The hero ends on its accent colour while the backdrop below starts on
+       * navy. This blends the two rather than leaving a hard edge.
+       */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[38vh]"
+        style={{
+          // Starts at the hero's composited bottom edge — its accent sits under
+          // a 30% black wash, so the raw teal would read as a step, not a blend.
+          background:
+            "linear-gradient(to bottom, color-mix(in srgb, var(--color-brand-teal) 56%, #000) 0%, color-mix(in srgb, var(--color-brand-teal) 26%, transparent) 45%, transparent 100%)",
+        }}
+      />
+      <div className="relative mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
         <div ref={figureRef} className="will-change-transform">
           {/* eslint-disable-next-line @next/next/no-img-element -- shares the hero's renditions so the browser reuses the decoded image */}
           <img
@@ -104,15 +118,15 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
           />
         </div>
 
-        <div ref={textRef} className="md:pl-6">
+        <div ref={textRef}>
           <h2
             id={id ? `${id}-header` : undefined}
-            className="text-metal font-display text-3xl font-semibold italic md:text-5xl"
+            className="text-metal font-display text-3xl font-semibold text-balance italic md:text-5xl"
           >
             {header}
           </h2>
           {body?.map((paragraph) => (
-            <p key={paragraph} className="mt-6 max-w-[52ch] text-fg-muted md:text-lg">
+            <p key={paragraph} className="body-copy mt-6 max-w-[62ch] text-fg-muted">
               {paragraph}
             </p>
           ))}

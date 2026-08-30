@@ -35,7 +35,7 @@
 
   /* --- Type --------------------------------------------------------- */
   --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
-  --font-body: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-quattrocento), Georgia, "Times New Roman", serif;
 
   /* --- Motion ------------------------------------------------------- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -89,6 +89,30 @@
     outline-offset: 3px;
     border-radius: 2px;
   }
+}
+
+/*
+ * Justified body copy.
+ *
+ * Justification alone stretches word spaces into rivers, especially in German
+ * with its long compounds — hyphenation is what keeps the spacing even, so the
+ * two belong together. The limits stop the browser from breaking off two-letter
+ * fragments, which read worse than a slightly loose line.
+ */
+@utility body-copy {
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  hyphenate-limit-chars: 6 3 3;
+  /*
+   * Quattrocento's x-height is 0.459 em — small for a screen face — so it wants
+   * more size than a typical UI font to stay comfortable: 17px on a phone up to
+   * 20px on a wide viewport. The line-height is unitless, so the leading scales
+   * with the type instead of drifting tight as the text grows.
+   */
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  line-height: 1.68;
 }
 
 @utility text-metal {

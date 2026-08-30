@@ -4,11 +4,11 @@ import { KineticGallery } from "@/components/ui/kinetic-gallery";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
 import { galleryArtworks, heroArtwork } from "@/data/artworks";
 
-const INTRO_HEADER = "Jedes Auto ist ein Unikat";
+const INTRO_HEADER = "Ein Unikat verdient ein Unikat";
 
 const INTRO_BODY = [
-  "Jedes Auto trägt seine eigene Geschichte: wie es entstanden ist, welche Rekorde es gebrochen hat — oder schlicht, dass es immer einen Menschen gab, der sich vorgenommen hat, genau dieses eine zu besitzen. Durch Zufall, durch jahrelanges Sparen, durch die eigene Restauration.",
-  "Genau das hole ich in meine Einzelanfertigungen: jede Zeichnung ein Unikat, von Hand, für ein Fahrzeug. Und mit der Garantie, dass sie es bleibt — auch in der heutigen Entwicklung. So einzigartig wie die Autos selbst, ihre Besitzer und die gemeinsamen Abenteuer.",
+  "Jedes Auto trägt seine eigene Geschichte: wie es entstanden ist, welche Rekorde es gebrochen hat — und fast immer auch die eines Menschen, der sich vorgenommen hatte, genau dieses eine zu besitzen. Durch Zufall, durch jahrelanges Sparen oder durch die eigene Restauration.",
+  "Diese Geschichte halte ich fest. Jede Zeichnung entsteht als Einzelanfertigung, von Hand, für ein bestimmtes Fahrzeug — und bleibt ein Unikat, gerade in einer Zeit, in der sich Bilder beliebig vervielfältigen lassen. So einzigartig wie das Auto selbst, seine Besitzer und die gemeinsamen Wege.",
 ];
 
 /**

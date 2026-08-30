@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Montserrat } from "next/font/google";
+import { Cormorant_Garamond } from "next/font/google";
+import localFont from "next/font/local";
 
 import "./globals.css";
 
@@ -11,10 +12,13 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+// Supplied with the layout as a TTF, so it is served from the repo rather
+// than fetched from Google Fonts.
+const quattrocento = localFont({
+  src: "./fonts/Quattrocento-Regular.ttf",
+  variable: "--font-quattrocento",
+  weight: "400",
+  style: "normal",
   display: "swap",
 });
 
@@ -35,7 +39,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="de" className={`${cormorant.variable} ${montserrat.variable}`}>
+    <html lang="de" className={`${cormorant.variable} ${quattrocento.variable}`}>
       <body className="antialiased">
         <a
           href="#inhalt"
