@@ -96,15 +96,16 @@
  *
  * Justification alone stretches word spaces into rivers, especially in German
  * with its long compounds — hyphenation is what keeps the spacing even, so the
- * two belong together. The limits stop the browser from breaking off two-letter
- * fragments, which read worse than a slightly loose line.
+ * two belong together.
  */
 @utility body-copy {
   text-align: justify;
   text-justify: inter-word;
   -webkit-hyphens: auto;
   hyphens: auto;
-  hyphenate-limit-chars: 6 3 3;
+  /* 3 letters before the break, 2 after — the shortest split German
+     typesetting accepts, and narrow columns need every break they can get. */
+  hyphenate-limit-chars: 5 3 2;
   /*
    * Quattrocento's x-height is 0.459 em — small for a screen face — so it wants
    * more size than a typical UI font to stay comfortable: 17px on a phone up to

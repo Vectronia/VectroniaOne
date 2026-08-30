@@ -37,6 +37,10 @@ function usePrefersReducedMotion() {
 /**
  * The panel the hero hands off to: the artwork settles on the left, the text
  * sits right with room around it, over the page's static backdrop.
+ *
+ * The section clips horizontally: the entry tween parks the artwork at
+ * `ARTWORK_TRAVEL` percent to the right until its trigger fires, which on a
+ * narrow viewport is wide enough to open a horizontal scrollbar.
  */
 export function IntroPanel({ artwork, header, body, id, className }: IntroPanelProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -86,7 +90,7 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
       ref={sectionRef}
       id={id}
       aria-labelledby={id ? `${id}-header` : undefined}
-      className={cn("relative w-full px-6 py-24 md:py-32", className)}
+      className={cn("relative w-full overflow-x-clip px-6 py-24 lg:py-32", className)}
     >
       {/*
        * The hero ends on its accent colour while the backdrop below starts on
@@ -102,13 +106,13 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
             "linear-gradient(to bottom, color-mix(in srgb, var(--color-brand-teal) 56%, #000) 0%, color-mix(in srgb, var(--color-brand-teal) 26%, transparent) 45%, transparent 100%)",
         }}
       />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         <div ref={figureRef} className="will-change-transform">
           {/* eslint-disable-next-line @next/next/no-img-element -- shares the hero's renditions so the browser reuses the decoded image */}
           <img
             src={artwork.src}
             srcSet={artwork.srcSet}
-            sizes="(max-width: 768px) 88vw, 44vw"
+            sizes="(max-width: 1024px) 88vw, 44vw"
             alt={artwork.alt}
             width={artwork.width}
             height={artwork.height}
@@ -121,7 +125,7 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
         <div ref={textRef}>
           <h2
             id={id ? `${id}-header` : undefined}
-            className="text-metal font-display text-3xl font-semibold text-balance italic md:text-5xl"
+            className="text-metal font-display text-3xl font-semibold text-balance italic md:text-4xl lg:text-5xl"
           >
             {header}
           </h2>
