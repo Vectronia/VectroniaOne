@@ -1,6 +1,15 @@
 import { HeroScrub } from "@/components/ui/hero-scrub";
+import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
+import { StaticBackdrop } from "@/components/ui/static-backdrop";
 import { galleryArtworks, heroArtwork } from "@/data/artworks";
+
+/**
+ * PLACEHOLDER — the real header lives in 1P1R1oaK.indd, whose story text is
+ * held in a proprietary compressed stream that cannot be read outside
+ * InDesign. Replace this string once the wording arrives.
+ */
+const INTRO_HEADER = "Platzhalter-Header";
 
 /**
  * Both hero titles are brand artwork rather than text. They sit inside
@@ -12,7 +21,10 @@ const WORDMARK_WIDTHS = [640, 1280, 1920, 2560];
 export default function Home() {
   return (
     <main>
+      <StaticBackdrop revealAfter="#hero" />
+
       <HeroScrub
+        id="hero"
         heading="Vectronia One — Automobilkunst"
         accentHex="#11383b"
         posterSrc={heroArtwork.src}
@@ -54,7 +66,9 @@ export default function Home() {
         }
       />
 
-      <KineticGallery id="inhalt" label="Werke" artworks={galleryArtworks} />
+      <IntroPanel id="inhalt" artwork={heroArtwork} header={INTRO_HEADER} />
+
+      <KineticGallery label="Werke" artworks={galleryArtworks} />
     </main>
   );
 }

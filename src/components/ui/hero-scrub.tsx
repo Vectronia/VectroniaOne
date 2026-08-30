@@ -37,6 +37,7 @@ export type HeroScrubProps = {
   /** Optional canvas frame sequence. Omit both to run the choreography on the still alone. */
   frameCount?: number;
   frameUrl?: (index: number) => string;
+  id?: string;
   className?: string;
   titleTopClassName?: string;
   titleBottomClassName?: string;
@@ -75,6 +76,7 @@ export function HeroScrub({
   titleBottom,
   frameCount = 0,
   frameUrl,
+  id,
   className,
   titleTopClassName,
   titleBottomClassName,
@@ -349,6 +351,7 @@ export function HeroScrub({
   return (
     <section
       ref={sectionRef}
+      id={id}
       className={cn(
         "relative w-full overflow-clip text-white",
         "h-[var(--hero-track)] motion-reduce:h-[100svh]",

@@ -142,7 +142,7 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
     <section
       id={id}
       aria-label={label}
-      className={cn("relative w-full bg-[image:var(--gradient-page)]", className)}
+      className={cn("relative w-full", className)}
     >
       <ul
         ref={gridRef}
