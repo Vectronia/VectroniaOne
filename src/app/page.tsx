@@ -1,5 +1,5 @@
 import { BrandDrawer } from "@/components/ui/brand-drawer";
-import { HeroScrub } from "@/components/ui/hero-scrub";
+import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
@@ -12,12 +12,18 @@ const INTRO_BODY = [
   "Diese Geschichte halte ich fest. Jede Zeichnung entsteht als Einzelanfertigung, von Hand, für ein bestimmtes Fahrzeug — und bleibt ein Unikat, gerade in einer Zeit, in der sich Bilder beliebig vervielfältigen lassen. So einzigartig wie das Auto selbst, seine Besitzer und die gemeinsamen Wege.",
 ];
 
-/**
- * Both hero titles are brand artwork rather than text. They sit inside
- * `aria-hidden` wrappers and carry `alt=""`; the section's real heading is
- * rendered for assistive tech by HeroScrub itself.
- */
 const WORDMARK_WIDTHS = [640, 1280, 1920, 2560];
+
+/**
+ * PLACEHOLDER — the hero's floating artwork is meant to be the supplied cut-out
+ * with a transparent background. Until that file arrives this points at the
+ * framed photograph so the choreography can be built and measured; swapping it
+ * is a change to these two constants.
+ */
+const CUTOUT_SRC = "/hero/capri-1920.webp";
+const CUTOUT_SRCSET = [960, 1440, 1920, 2560]
+  .map((w) => `/hero/capri-${w}.webp ${w}w`)
+  .join(", ");
 
 export default function Home() {
   return (
@@ -32,45 +38,41 @@ export default function Home() {
         ]}
       />
 
-      <HeroScrub
+      <HeroStage
         id="hero"
         heading="Vectronia One — Automobilkunst"
         accentHex="#11383b"
+        aspect={heroArtwork.aspect}
+        artworkAlt={heroArtwork.alt}
+        cutoutSrc={CUTOUT_SRC}
+        cutoutSrcSet={CUTOUT_SRCSET}
         posterSrc={heroArtwork.src}
         posterSrcSet={heroArtwork.srcSet}
-        posterSizes="(max-width: 768px) 96vw, min(96vw, 96svh)"
-        posterAlt={heroArtwork.alt}
-        // Wordmark sits left of centre from the start.
-        titleTopClassName="justify-start pl-[3vw] md:pl-[5vw]"
-        titleTop={
+        logo={
+          // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the Illustrator mark
+          <img
+            src="/brand/vectronia-mark-960.webp"
+            srcSet="/brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w"
+            sizes="(max-width: 768px) 60vh, 70vh"
+            alt=""
+            width={960}
+            height={952}
+            fetchPriority="high"
+            decoding="async"
+            className="h-[clamp(20rem,62vh,44rem)] w-auto max-w-none"
+          />
+        }
+        wordmark={
           // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the Illustrator wordmark
           <img
             src="/brand/vectronia-one-1920.webp"
             srcSet={WORDMARK_WIDTHS.map((w) => `/brand/vectronia-one-${w}.webp ${w}w`).join(", ")}
-            sizes="(max-width: 768px) 88vw, 74vw"
+            sizes="(max-width: 768px) 86vw, 52vw"
             alt=""
             width={1728}
             height={128}
-            fetchPriority="high"
             decoding="async"
-            className="h-auto w-[88vw] max-w-[62rem] md:w-[74vw]"
-          />
-        }
-        // The mark is oversized and overhangs the right edge at rest; the
-        // parting tween slides it fully into frame before wiping it off.
-        titleBottomClassName="justify-end pr-[2vw]"
-        titleBottomRestX="16vw"
-        titleBottom={
-          // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the Illustrator mark
-          <img
-            src="/brand/vectronia-mark-640.webp"
-            srcSet="/brand/vectronia-mark-320.webp 320w, /brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w"
-            sizes="(max-width: 768px) 11rem, 20rem"
-            alt=""
-            width={960}
-            height={952}
-            decoding="async"
-            className="h-[clamp(8rem,22vh,14rem)] w-auto"
+            className="h-auto w-[86vw] max-w-[46rem] md:w-[52vw]"
           />
         }
       />
