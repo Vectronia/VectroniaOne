@@ -53,13 +53,13 @@ export default function Home() {
           <img
             src="/brand/vectronia-mark-960.webp"
             srcSet="/brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w"
-            sizes="(max-width: 768px) 100vh, 100vh"
+            sizes="(max-width: 768px) 58vh, 114vh"
             alt=""
             width={960}
             height={952}
             fetchPriority="high"
             decoding="async"
-            className="h-[clamp(26rem,100vh,64rem)] w-auto max-w-none"
+            className="h-full w-auto max-w-none"
           />
         }
         wordmark={
@@ -67,12 +67,12 @@ export default function Home() {
           <img
             src="/brand/vectronia-one-1920.webp"
             srcSet={WORDMARK_WIDTHS.map((w) => `/brand/vectronia-one-${w}.webp ${w}w`).join(", ")}
-            sizes="(max-width: 768px) 86vw, 52vw"
+            sizes="(max-width: 768px) 86vw, 65vw"
             alt=""
             width={1728}
             height={128}
             decoding="async"
-            className="h-auto w-[86vw] max-w-[46rem] md:w-[52vw]"
+            className="h-auto w-full"
           />
         }
       />

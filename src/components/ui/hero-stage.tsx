@@ -29,6 +29,32 @@ const RELEASE_AT = 0.8;
 const ON_DARK = { brightness: 0.685, contrast: 1, saturate: 1 };
 const IN_PHOTO = { brightness: 1, contrast: 1, saturate: 1 };
 
+/*
+ * Rest geometry is measured off heroStart.psd rather than eyeballed. Its layer
+ * frames carry transparent padding, so the painted bounds were read from each
+ * layer's alpha and expressed against the file's 1366x768 canvas:
+ *
+ *   logo      (-38,62)-(836,927)    112.63vh tall, left -4.95vh (= -2.78vw at 16:9)
+ *   car       (631,178)-(1241,509)  43.10vh tall, centre 68.52vw / 44.73vh
+ *   wordmark  (445,558)-(1325,624)  64.42vw wide, left 32.58vw, top 72.66vh
+ *
+ * The car's frame is larger than the car: inside the shipped asset the artwork
+ * occupies x 3.23-99.06%, y 25.18-97.47%. Solving for a frame that puts the car
+ * on the reference position gives 59.62vh x 82.83vh at left calc(68.52vw -
+ * 42.36vh), top 8.17vh — the classes below.
+ *
+ * Those proportions come from a 16:9 comp, so they only apply from md up; a
+ * narrow viewport gets a centred arrangement instead. The classes are written
+ * out in full because Tailwind only emits what it can read literally.
+ *
+ * None of the three may be placed with a translate utility. GSAP writes the
+ * whole `transform` property, so a CSS translate is erased the moment a tween
+ * touches the element — and the landing maths reads `offset*`, which never saw
+ * the translate in the first place. Centring is done with left/top instead;
+ * with translate utilities the cut-out missed the photograph by 245px at 390px
+ * wide while landing correctly on a desktop viewport.
+ */
+
 export type HeroStageProps = {
   /** The cut-out artwork that travels from the dark ground into the photo. */
   cutoutSrc: string;
@@ -65,10 +91,11 @@ function usePrefersReducedMotion() {
 /**
  * The opening act.
  *
- * At rest: the mark stands large against the left edge, the cut-out artwork
- * floats on the dark ground, and the wordmark runs along the bottom. Scrolling
- * clears the marks to either side and carries the cut-out into the framed
- * photograph, where its treatment resolves to the photograph's own.
+ * At rest the composition reproduces the supplied reference: the mark stands
+ * large against the left edge, the cut-out floats on the dark ground, and the
+ * wordmark runs along the lower edge. Scrolling clears the marks to either side
+ * and carries the cut-out into the framed photograph, where its treatment
+ * resolves to the photograph's own.
  */
 export function HeroStage({
   cutoutSrc,
@@ -97,10 +124,10 @@ export function HeroStage({
     if (reduced) return;
     const section = sectionRef.current;
     const car = carRef.current;
-    if (!section || !car) return;
+    const card = cardRef.current;
+    if (!section || !car || !card) return;
 
     const ctx = gsap.context(() => {
-      const startScale = () => (window.innerWidth < 768 ? 1 : 1.18);
       const immerseScale = () => {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
@@ -110,17 +137,32 @@ export function HeroStage({
         return Math.max(vw / baseW, vh / baseH) * IMMERSE_OVERFILL;
       };
 
-      // The cut-out's treatment is tweened through a proxy: `filter` is a
-      // string, so GSAP cannot interpolate it directly.
+      // Landing is measured from the two untransformed layout boxes, so the
+      // cut-out finishes exactly over the photograph at any viewport. `offset*`
+      // rather than getBoundingClientRect, because the latter already includes
+      // whatever transform the tween has applied.
+      const landing = () => ({
+        x: card.offsetLeft + card.offsetWidth / 2 - (car.offsetLeft + car.offsetWidth / 2),
+        y: card.offsetTop + card.offsetHeight / 2 - (car.offsetTop + car.offsetHeight / 2),
+        scale: card.offsetWidth / car.offsetWidth,
+      });
+
+      // `filter` is a string, so the treatment tweens through a numeric proxy.
       const tone = { ...ON_DARK };
       const applyTone = () => {
         car.style.filter = `brightness(${tone.brightness}) contrast(${tone.contrast}) saturate(${tone.saturate})`;
       };
       applyTone();
 
-      gsap.set(car, { xPercent: 14, yPercent: -4, scale: startScale() });
-      gsap.set(cardRef.current, { scale: 1, transformOrigin: "50% 50%" });
+      gsap.set(card, { scale: 1, transformOrigin: "50% 50%" });
       gsap.set(posterRef.current, { opacity: 0 });
+
+      // Card and cut-out scale together once landed, so they stay registered.
+      const zoom = { value: 1 };
+      const applyZoom = () => {
+        gsap.set(card, { scale: zoom.value });
+        gsap.set(car, { scale: landing().scale * zoom.value });
+      };
 
       const master = gsap.timeline({
         scrollTrigger: {
@@ -138,17 +180,18 @@ export function HeroStage({
       master.to(cueRef.current, { opacity: 0, ease: "power1.in", duration: 0.06 }, 0);
       master.to(
         car,
-        { xPercent: 0, yPercent: 0, scale: 1, ease: "power2.inOut", duration: LANDED_AT },
+        {
+          x: () => landing().x,
+          y: () => landing().y,
+          scale: () => landing().scale,
+          ease: "power2.inOut",
+          duration: LANDED_AT,
+        },
         0,
       );
       master.to(
         tone,
-        {
-          ...IN_PHOTO,
-          ease: "power1.inOut",
-          duration: LANDED_AT,
-          onUpdate: applyTone,
-        },
+        { ...IN_PHOTO, ease: "power1.inOut", duration: LANDED_AT, onUpdate: applyTone },
         0,
       );
       master.to(
@@ -157,17 +200,20 @@ export function HeroStage({
         LANDED_AT * 0.2,
       );
 
-      // 2 — immersion.
+      // 2 — immersion, and 3 — release.
       master.to(
-        cardRef.current,
-        { scale: () => immerseScale(), ease: "power2.in", duration: RELEASE_AT - LANDED_AT },
+        zoom,
+        {
+          value: () => immerseScale(),
+          ease: "power2.in",
+          duration: RELEASE_AT - LANDED_AT,
+          onUpdate: applyZoom,
+        },
         LANDED_AT,
       );
-
-      // 3 — release.
       master.to(
-        cardRef.current,
-        { scale: 1, ease: "power3.inOut", duration: 1 - RELEASE_AT },
+        zoom,
+        { value: 1, ease: "power3.inOut", duration: 1 - RELEASE_AT, onUpdate: applyZoom },
         RELEASE_AT,
       );
 
@@ -210,23 +256,18 @@ export function HeroStage({
           }}
         />
 
-        {/*
-         * Full-height mark against the left edge. Sat down a little so the arc
-         * clears the top edge — the crop belongs at the bottom, as in the
-         * reference, not through the sweep.
-         */}
         <div
           ref={logoRef}
           aria-hidden
-          className="pointer-events-none absolute top-1/2 left-0 z-10 -translate-x-[32%] translate-y-[calc(-50%+7vh)] will-change-transform"
+          className="pointer-events-none absolute top-[calc(50%-29vh)] left-[-17.6vh] z-10 h-[58vh] will-change-transform md:top-[8.07vh] md:left-[-4.95vh] md:h-[112.63vh]"
         >
           {logo}
         </div>
 
-        {/* The photograph the cut-out lands in, and the cut-out itself. */}
+        {/* The photograph the cut-out lands in. */}
         <div
           ref={cardRef}
-          className="relative z-20 will-change-transform"
+          className="relative z-20 overflow-hidden rounded-[12px] will-change-transform md:rounded-[16px]"
           style={{
             width: `min(96vw, calc(${CARD_VH * 100}svh * ${aspect}))`,
             height: `min(${CARD_VH * 100}svh, 96vw / ${aspect})`,
@@ -236,7 +277,7 @@ export function HeroStage({
           <div
             ref={posterRef}
             aria-hidden
-            className="absolute inset-0 overflow-hidden rounded-[12px] shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px]"
+            className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
             <img
@@ -245,33 +286,36 @@ export function HeroStage({
               sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
               alt=""
               width={1600}
-              height={900}
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          </div>
-
-          <div ref={carRef} className="absolute inset-0 z-10 will-change-[transform,filter]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
-            <img
-              src={cutoutSrc}
-              srcSet={cutoutSrcSet}
-              sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
-              alt={artworkAlt}
-              width={1600}
-              height={1030}
-              fetchPriority="high"
+              height={1151}
               decoding="async"
               className="h-full w-full object-cover"
             />
           </div>
         </div>
 
-        {/* The wordmark runs along the lower edge. */}
+        {/* The cut-out, at the reference position until it is carried across. */}
+        <div
+          ref={carRef}
+          className="absolute top-[calc(50%-21vh)] left-[calc(50%-29.17vh)] z-30 h-[42vh] w-[58.35vh] will-change-[transform,filter] md:top-[8.17vh] md:left-[calc(68.52vw-42.36vh)] md:h-[59.62vh] md:w-[82.83vh]"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
+          <img
+            src={cutoutSrc}
+            srcSet={cutoutSrcSet}
+            sizes="(max-width: 768px) 96vw, 83svh"
+            alt={artworkAlt}
+            width={1920}
+            height={1382}
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        </div>
+
         <div
           ref={wordRef}
           aria-hidden
-          className="pointer-events-none absolute right-0 bottom-[8vh] left-0 z-10 flex justify-center will-change-transform md:justify-end md:pr-[6vw]"
+          className="pointer-events-none absolute bottom-[8vh] left-[7vw] z-10 w-[86vw] will-change-transform md:bottom-auto md:top-[72.66vh] md:left-[32.58vw] md:w-[64.42vw]"
         >
           {wordmark}
         </div>
