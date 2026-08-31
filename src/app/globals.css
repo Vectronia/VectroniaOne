@@ -116,6 +116,17 @@
   line-height: 1.68;
 }
 
+/*
+ * Trims the half-leading above the first line and below the last, so a
+ * neighbouring element aligns to the letters rather than to the line box.
+ * Without it the artwork beside the copy sits about 7px proud at either end.
+ * Chrome 133+ and Safari 18.2+; elsewhere the block simply keeps its leading,
+ * which is the old behaviour rather than a broken one.
+ */
+@utility text-box-trim {
+  text-box: trim-both cap alphabetic;
+}
+
 @utility text-metal {
   background-image: var(--gradient-metal);
   background-clip: text;

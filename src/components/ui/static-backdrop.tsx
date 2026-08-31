@@ -4,10 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import Auralis from "@/components/ui/auralis";
+
 gsap.registerPlugin(ScrollTrigger);
 
-/** Total drift of the backdrop across the whole page, in viewport heights. */
-const DRIFT_VH = 0.12;
+/**
+ * Brand palette ordered by luminance — brightest first.
+ *
+ * The shader reads [0] as the broad field and [1] as the glow, so the order
+ * decides how much of each colour the page carries.
+ */
+const FIELD_COLORS = ["#e5ad43", "#11383b", "#191c28"];
+
+/** Field drift with nobody scrolling — just enough to not read as a still. */
+const IDLE_SPEED = 0.02;
+/** Field time added per 1000px scrolled. */
+const SCROLL_BOOST = 0.55;
 
 export type StaticBackdropProps = {
   /** Selector for the element the backdrop fades in behind, e.g. the hero. */
@@ -27,15 +39,15 @@ function usePrefersReducedMotion() {
 }
 
 /**
- * A fixed backdrop that appears once the hero has scrolled past.
+ * The page's backdrop: a WebGL field fixed behind everything, revealed once the
+ * hero has scrolled past.
  *
- * It is static by construction — being fixed, it never moves on its own. The
- * only motion is a slow drift tied to scroll position, so it responds to the
- * reader rather than animating at them.
+ * It does not animate at the reader — scrolling is what drives it, with only a
+ * slight drift at rest. Under reduced motion Auralis renders a single frame and
+ * the backdrop is visible from the start.
  */
 export function StaticBackdrop({ revealAfter }: StaticBackdropProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const layerRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -58,17 +70,6 @@ export function StaticBackdrop({ revealAfter }: StaticBackdropProps) {
           },
         },
       );
-
-      gsap.to(layerRef.current, {
-        yPercent: -DRIFT_VH * 100,
-        ease: "none",
-        scrollTrigger: {
-          trigger: document.body,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.5,
-        },
-      });
     }, rootRef);
 
     return () => ctx.revert();
@@ -81,17 +82,18 @@ export function StaticBackdrop({ revealAfter }: StaticBackdropProps) {
       // Visible from the start under reduced motion, where nothing fades it in.
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden opacity-0 motion-reduce:opacity-100"
     >
-      <div
-        ref={layerRef}
-        className="absolute -inset-y-[15%] inset-x-0 bg-[image:var(--gradient-page)]"
+      <Auralis
+        colors={FIELD_COLORS}
+        speed={IDLE_SPEED}
+        scrollBoost={SCROLL_BOOST}
+        grain={0.35}
+        maxDpr={1}
+        height="100%"
+        // Also the fallback when WebGL is unavailable or software-rendered.
+        className="h-full bg-[image:var(--gradient-page)]"
       />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 60%)",
-        }}
-      />
+      {/* Keeps the field from competing with the content laid over it. */}
+      <div className="absolute inset-0 bg-brand-navy/45" />
     </div>
   );
 }

@@ -53,36 +53,46 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
     const section = sectionRef.current;
     if (!section) return;
 
+    let io: IntersectionObserver | null = null;
+
     const ctx = gsap.context(() => {
       // The plate carries on from where the hero released it, drifting left
-      // into place while the text rises on the right.
-      gsap.from(figureRef.current, {
-        xPercent: ARTWORK_TRAVEL,
-        opacity: 0,
-        ease: "power3.out",
-        duration: 1,
-        scrollTrigger: {
-          trigger: section,
-          start: "top 78%",
-          once: true,
-        },
-      });
+      // into place while the copy fades up beside it.
+      //
+      // An IntersectionObserver drives this rather than a ScrollTrigger: the
+      // trigger's cached start position was stale on first load and left the
+      // whole panel at opacity 0 for seconds after it had entered the viewport.
+      gsap.set(figureRef.current, { xPercent: ARTWORK_TRAVEL, opacity: 0 });
+      // Opacity only for the copy — any vertical offset here would break its
+      // alignment with the artwork for as long as the tween runs.
+      gsap.set(textRef.current, { opacity: 0 });
 
-      gsap.from(textRef.current, {
-        y: 28,
-        opacity: 0,
-        ease: "power2.out",
-        duration: 0.9,
-        delay: 0.15,
-        scrollTrigger: {
-          trigger: section,
-          start: "top 78%",
-          once: true,
+      io = new IntersectionObserver(
+        (entries) => {
+          if (!entries[0]?.isIntersecting) return;
+          io?.disconnect();
+          gsap.to(figureRef.current, {
+            xPercent: 0,
+            opacity: 1,
+            ease: "power3.out",
+            duration: 1,
+          });
+          gsap.to(textRef.current, {
+            opacity: 1,
+            ease: "power2.out",
+            duration: 0.9,
+            delay: 0.15,
+          });
         },
-      });
+        { rootMargin: "0px 0px -12% 0px" },
+      );
+      io.observe(section);
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      io?.disconnect();
+      ctx.revert();
+    };
   }, [reduced]);
 
   return (
@@ -106,8 +116,26 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
             "linear-gradient(to bottom, color-mix(in srgb, var(--color-brand-teal) 56%, #000) 0%, color-mix(in srgb, var(--color-brand-teal) 26%, transparent) 45%, transparent 100%)",
         }}
       />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-        <div ref={figureRef} className="will-change-transform">
+      {/*
+       * Two rows on wide viewports: the heading sits alone above, and the
+       * artwork shares the lower row with the body copy so the two stretch to
+       * the same height — the picture then starts on the first line of text and
+       * finishes on the last.
+       */}
+      <div className="relative mx-auto grid max-w-6xl gap-y-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch lg:gap-x-16 lg:gap-y-12">
+        <div className="lg:col-start-2 lg:row-start-1">
+          <h2
+            id={id ? `${id}-header` : undefined}
+            className="text-metal font-display text-3xl font-semibold text-balance italic md:text-4xl lg:text-right lg:text-5xl"
+          >
+            {header}
+          </h2>
+        </div>
+
+        <div
+          ref={figureRef}
+          className="will-change-transform lg:col-start-1 lg:row-start-2 lg:flex lg:items-stretch"
+        >
           {/* eslint-disable-next-line @next/next/no-img-element -- shares the hero's renditions so the browser reuses the decoded image */}
           <img
             src={artwork.src}
@@ -118,19 +146,16 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
             height={artwork.height}
             loading="lazy"
             decoding="async"
-            className="w-full rounded-[12px] shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px]"
+            className="w-full rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px] lg:h-full lg:w-full"
           />
         </div>
 
-        <div ref={textRef}>
-          <h2
-            id={id ? `${id}-header` : undefined}
-            className="text-metal font-display text-3xl font-semibold text-balance italic md:text-4xl lg:text-5xl"
-          >
-            {header}
-          </h2>
-          {body?.map((paragraph) => (
-            <p key={paragraph} className="body-copy mt-6 max-w-[62ch] text-fg-muted">
+        <div ref={textRef} className="text-box-trim lg:col-start-2 lg:row-start-2">
+          {body?.map((paragraph, index) => (
+            <p
+              key={paragraph}
+              className={cn("body-copy max-w-[62ch] text-fg-muted", index > 0 && "mt-6")}
+            >
               {paragraph}
             </p>
           ))}
