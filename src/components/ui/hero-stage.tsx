@@ -210,11 +210,15 @@ export function HeroStage({
           }}
         />
 
-        {/* Full-height mark against the left edge; the crop is intended. */}
+        {/*
+         * Full-height mark against the left edge. Sat down a little so the arc
+         * clears the top edge — the crop belongs at the bottom, as in the
+         * reference, not through the sweep.
+         */}
         <div
           ref={logoRef}
           aria-hidden
-          className="pointer-events-none absolute top-1/2 left-0 z-10 -translate-x-[32%] -translate-y-1/2 will-change-transform"
+          className="pointer-events-none absolute top-1/2 left-0 z-10 -translate-x-[32%] translate-y-[calc(-50%+7vh)] will-change-transform"
         >
           {logo}
         </div>
