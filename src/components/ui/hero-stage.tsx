@@ -207,11 +207,11 @@ export function HeroStage({
           }}
         />
 
-        {/* The mark stands large against the left edge, deliberately cropped. */}
+        {/* Full-height mark against the left edge; the crop is intended. */}
         <div
           ref={logoRef}
           aria-hidden
-          className="pointer-events-none absolute top-1/2 left-0 z-10 -translate-x-[26%] -translate-y-1/2 will-change-transform"
+          className="pointer-events-none absolute top-1/2 left-0 z-10 -translate-x-[32%] -translate-y-1/2 will-change-transform"
         >
           {logo}
         </div>

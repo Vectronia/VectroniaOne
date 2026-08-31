@@ -53,13 +53,13 @@ export default function Home() {
           <img
             src="/brand/vectronia-mark-960.webp"
             srcSet="/brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w"
-            sizes="(max-width: 768px) 60vh, 70vh"
+            sizes="(max-width: 768px) 100vh, 100vh"
             alt=""
             width={960}
             height={952}
             fetchPriority="high"
             decoding="async"
-            className="h-[clamp(20rem,62vh,44rem)] w-auto max-w-none"
+            className="h-[clamp(26rem,100vh,64rem)] w-auto max-w-none"
           />
         }
         wordmark={
