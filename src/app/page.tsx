@@ -1,3 +1,4 @@
+import { BrandDrawer } from "@/components/ui/brand-drawer";
 import { HeroScrub } from "@/components/ui/hero-scrub";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
@@ -22,6 +23,14 @@ export default function Home() {
   return (
     <main>
       <StaticBackdrop revealAfter="#hero" />
+      <BrandDrawer
+        revealWith="#inhalt"
+        links={[
+          { label: "Start" },
+          { label: "Ein Unikat verdient ein Unikat", targetId: "inhalt" },
+          { label: "Werke", targetId: "werke" },
+        ]}
+      />
 
       <HeroScrub
         id="hero"
@@ -68,7 +77,7 @@ export default function Home() {
 
       <IntroPanel id="inhalt" artwork={heroArtwork} header={INTRO_HEADER} body={INTRO_BODY} />
 
-      <KineticGallery label="Werke" artworks={galleryArtworks} />
+      <KineticGallery id="werke" label="Werke" artworks={galleryArtworks} />
     </main>
   );
 }
