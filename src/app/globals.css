@@ -100,6 +100,12 @@
  */
 @utility body-copy {
   text-align: justify;
+  /*
+   * Justification already flushes every line right except the last, which runs
+   * short and ranges left by default. Sending it right too gives the block one
+   * unbroken right edge, which is what the ranged-right heading meets.
+   */
+  text-align-last: right;
   text-justify: inter-word;
   -webkit-hyphens: auto;
   hyphens: auto;
