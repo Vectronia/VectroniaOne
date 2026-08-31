@@ -19,11 +19,14 @@ const LANDED_AT = 0.2;
 const RELEASE_AT = 0.8;
 
 /**
- * How the cut-out is treated while it floats on the dark ground, so it reads as
- * part of the field rather than a pasted white drawing. Animated to neutral as
- * it settles into the photo.
+ * How the cut-out is treated while it floats on the dark ground.
+ *
+ * Taken from the supplied heroStart.psd, whose brightness/contrast layer sits
+ * at -70/0 over the car. Fitting that against the flattened file gives
+ * brightness(0.685) to within 3.2/255, and no contrast or saturation change.
+ * Animated to neutral as the car settles into the photograph.
  */
-const ON_DARK = { brightness: 0.62, contrast: 1.18, saturate: 0.85 };
+const ON_DARK = { brightness: 0.685, contrast: 1, saturate: 1 };
 const IN_PHOTO = { brightness: 1, contrast: 1, saturate: 1 };
 
 export type HeroStageProps = {
@@ -255,7 +258,7 @@ export function HeroStage({
               height={1030}
               fetchPriority="high"
               decoding="async"
-              className="h-full w-full object-contain"
+              className="h-full w-full object-cover"
             />
           </div>
         </div>

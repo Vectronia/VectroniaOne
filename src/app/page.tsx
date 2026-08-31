@@ -15,14 +15,14 @@ const INTRO_BODY = [
 const WORDMARK_WIDTHS = [640, 1280, 1920, 2560];
 
 /**
- * PLACEHOLDER — the hero's floating artwork is meant to be the supplied cut-out
- * with a transparent background. Until that file arrives this points at the
- * framed photograph so the choreography can be built and measured; swapping it
- * is a change to these two constants.
+ * The cut-out artwork, taken from the supplied heroStart.psd. Its alpha was
+ * lifted from that file's car layer and applied to the full-resolution
+ * original, keeping the original frame so it registers on the photograph
+ * exactly and the car does not shift as it lands.
  */
-const CUTOUT_SRC = "/hero/capri-1920.webp";
+const CUTOUT_SRC = "/hero/car-1920.webp";
 const CUTOUT_SRCSET = [960, 1440, 1920, 2560]
-  .map((w) => `/hero/capri-${w}.webp ${w}w`)
+  .map((w) => `/hero/car-${w}.webp ${w}w`)
   .join(", ");
 
 export default function Home() {
