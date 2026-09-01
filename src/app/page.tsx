@@ -12,6 +12,14 @@ const INTRO_BODY = [
   "Diese Geschichte halte ich fest. Jede Zeichnung entsteht als Einzelanfertigung, von Hand, für ein bestimmtes Fahrzeug — und bleibt ein Unikat, gerade in einer Zeit, in der sich Bilder beliebig vervielfältigen lassen. So einzigartig wie das Auto selbst, seine Besitzer und die gemeinsamen Wege.",
 ];
 
+const PROCESS_HEADER = "Der Prozess eines Werkes";
+
+const PROCESS_BODY = [
+  "Ein Werk kann auf verschiedenen Wegen entstehen. Nach einem Foto — oder vor Ort, wo ich Details genauer wahrnehme und in Ansicht und Bildaufbau freier bin. Für Autotreffen lasse ich mich buchen und skizziere direkt am Fahrzeug. Ebenso kann eine Vorlage aus meinem Skizzenbuch groß ausgeführt werden, auf Wunsch in einer eigenen Farbgebung.",
+  "Gearbeitet wird mit Tinte, Grafitstift, Kohle oder Ölpastellkreide — auf Aquarell-, Stein- und Zeichenpapier oder auf Leinwand.",
+  "Aus meiner Sammlung gebe ich außerdem Einzelstücke ab. Preise für Einzelaufträge auf Anfrage.",
+];
+
 const WORDMARK_WIDTHS = [640, 1280, 1920, 2560];
 
 /**
@@ -35,6 +43,7 @@ export default function Home() {
           { label: "Start" },
           { label: "Ein Unikat verdient ein Unikat", targetId: "inhalt" },
           { label: "Werke", targetId: "werke" },
+          { label: "Der Prozess eines Werkes", targetId: "prozess" },
         ]}
       />
 
@@ -80,6 +89,19 @@ export default function Home() {
       <IntroPanel id="inhalt" artwork={heroArtwork} header={INTRO_HEADER} body={INTRO_BODY} />
 
       <KineticGallery id="werke" label="Werke" artworks={galleryArtworks} />
+
+      {/*
+       * PLACEHOLDER artwork — this panel is meant to carry the photograph of
+       * the sketchbook being drawn at a show, which is also to sit last in the
+       * gallery and travel into this position. That file has not arrived; the
+       * uploads hold no raster image at all. Swapping it is one prop.
+       */}
+      <IntroPanel
+        id="prozess"
+        artwork={heroArtwork}
+        header={PROCESS_HEADER}
+        body={PROCESS_BODY}
+      />
     </main>
   );
 }
