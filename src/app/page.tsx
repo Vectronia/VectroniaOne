@@ -3,7 +3,7 @@ import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
-import { galleryArtworks, heroArtwork } from "@/data/artworks";
+import { galleryArtworks, heroArtwork, processPhoto } from "@/data/artworks";
 
 const INTRO_HEADER = "Ein Unikat verdient ein Unikat";
 
@@ -91,14 +91,13 @@ export default function Home() {
       <KineticGallery id="werke" label="Werke" artworks={galleryArtworks} />
 
       {/*
-       * PLACEHOLDER artwork — this panel is meant to carry the photograph of
-       * the sketchbook being drawn at a show, which is also to sit last in the
-       * gallery and travel into this position. That file has not arrived; the
-       * uploads hold no raster image at all. Swapping it is one prop.
+       * The same photograph that closes the gallery, shown here in the position
+       * the artwork holds in "Ein Unikat verdient ein Unikat" — so it reads as
+       * having travelled out of the grid into place.
        */}
       <IntroPanel
         id="prozess"
-        artwork={heroArtwork}
+        artwork={processPhoto}
         header={PROCESS_HEADER}
         body={PROCESS_BODY}
       />

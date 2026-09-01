@@ -158,5 +158,24 @@ function build(slug: string): Artwork {
 /** The plate shown in the hero. */
 export const heroArtwork = build("buch4-5");
 
-/** Everything else, in reading order. */
-export const galleryArtworks = ORDER.map(build);
+/**
+ * The photograph that closes the gallery and carries the process panel.
+ *
+ * Not part of the generated manifest: it is a photograph rather than one of
+ * the scanned drawings, and it is pinned last rather than taking a place in
+ * the reading order above.
+ */
+export const processPhoto: Artwork = {
+  slug: "artstalking",
+  title: "Vor Ort",
+  meta: "Fotografie",
+  alt: "Eine zeichnende Person hält ein aufgeschlagenes Skizzenbuch mit zwei Fahrzeugstudien; dahinter steht auf einer Oldtimermesse ein hellblauer Kombi der 1970er Jahre.",
+  width: 1531,
+  height: 1018,
+  aspect: 1.5039,
+  src: "/artwork/artstalking-1440.webp",
+  srcSet: "/artwork/artstalking-960.webp 960w, /artwork/artstalking-1440.webp 1440w",
+};
+
+/** Everything else, in reading order, with the photograph pinned to the end. */
+export const galleryArtworks = [...ORDER.map(build), processPhoto];
