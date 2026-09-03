@@ -78,6 +78,16 @@
     ]
   },
   {
+    "slug": "volvo3",
+    "source": "Volvo3.psd",
+    "width": 946,
+    "height": 648,
+    "aspect": 1.4599,
+    "widths": [
+      946
+    ]
+  },
+  {
     "slug": "buch4-5-1",
     "source": "Buch4.5_1.psd",
     "width": 3345,
@@ -117,6 +127,16 @@
     ]
   },
   {
+    "slug": "volvo",
+    "source": "Volvo.psd",
+    "width": 940,
+    "height": 672,
+    "aspect": 1.3988,
+    "widths": [
+      940
+    ]
+  },
+  {
     "slug": "buch4-5",
     "source": "Buch4.5.psd",
     "width": 3641,
@@ -140,6 +160,16 @@
       1440,
       1920,
       2560
+    ]
+  },
+  {
+    "slug": "volvo2",
+    "source": "Volvo2.psd",
+    "width": 891,
+    "height": 627,
+    "aspect": 1.4211,
+    "widths": [
+      891
     ]
   },
   {

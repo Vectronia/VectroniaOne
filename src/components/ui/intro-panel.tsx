@@ -13,8 +13,12 @@ gsap.registerPlugin(ScrollTrigger);
 const ARTWORK_TRAVEL = 14;
 
 export type IntroPanelProps = {
-  /** The same plate the hero shows, so it reads as one continuous object. */
-  artwork: Artwork;
+  /**
+   * The picture beside the copy. Pass several and they stack in the same
+   * column, sharing its height — the first still starts on the first line of
+   * text and the last still finishes on the last.
+   */
+  artwork: Artwork | Artwork[];
   header: string;
   /** One entry per paragraph. */
   body?: string[];
@@ -43,6 +47,7 @@ function usePrefersReducedMotion() {
  * narrow viewport is wide enough to open a horizontal scrollbar.
  */
 export function IntroPanel({ artwork, header, body, id, className }: IntroPanelProps) {
+  const pictures = Array.isArray(artwork) ? artwork : [artwork];
   const sectionRef = useRef<HTMLElement>(null);
   const figureRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -132,22 +137,37 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
           </h2>
         </div>
 
+        {/*
+         * The pictures are lifted out of the flow on wide viewports: the column
+         * keeps its grid cell but contributes no height, so the row is measured
+         * from the copy alone and the stack fills exactly that. Left in the
+         * flow they would set the row height themselves whenever they came out
+         * taller than the text — which is what pushed the last picture 27px
+         * past the last line at 1440.
+         */}
         <div
           ref={figureRef}
-          className="will-change-transform lg:col-start-1 lg:row-start-2 lg:flex lg:items-stretch"
+          className="will-change-transform lg:relative lg:col-start-1 lg:row-start-2"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- shares the hero's renditions so the browser reuses the decoded image */}
-          <img
-            src={artwork.src}
-            srcSet={artwork.srcSet}
-            sizes="(max-width: 1024px) 88vw, 44vw"
-            alt={artwork.alt}
-            width={artwork.width}
-            height={artwork.height}
-            loading="lazy"
-            decoding="async"
-            className="w-full rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px] lg:h-full lg:w-full"
-          />
+          <div className="flex flex-col gap-6 lg:absolute lg:inset-0">
+            {pictures.map((picture) => (
+              // eslint-disable-next-line @next/next/no-img-element -- shares the hero's renditions so the browser reuses the decoded image
+              <img
+                key={picture.slug}
+                src={picture.src}
+                srcSet={picture.srcSet}
+                sizes="(max-width: 1024px) 88vw, 44vw"
+                alt={picture.alt}
+                width={picture.width}
+                height={picture.height}
+                loading="lazy"
+                decoding="async"
+                // `min-h-0` lets a flex child shrink below its intrinsic
+                // height; several pictures share the column's height evenly.
+                className="w-full rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px] lg:min-h-0 lg:w-full lg:flex-1"
+              />
+            ))}
+          </div>
         </div>
 
         <div ref={textRef} className="text-box-trim lg:col-start-2 lg:row-start-2">

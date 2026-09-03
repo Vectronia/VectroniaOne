@@ -3,7 +3,7 @@ import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
-import { galleryArtworks, heroArtwork, processPhoto } from "@/data/artworks";
+import { galleryArtworks, heroArtwork, passionPhotos, processPhoto } from "@/data/artworks";
 
 const INTRO_HEADER = "Ein Unikat verdient ein Unikat";
 
@@ -18,6 +18,13 @@ const PROCESS_BODY = [
   "Ein Werk kann auf verschiedenen Wegen entstehen. Nach einem Foto — oder vor Ort, wo ich Details genauer wahrnehme und in Ansicht und Bildaufbau freier bin. Für Autotreffen lasse ich mich buchen und skizziere direkt am Fahrzeug. Ebenso kann eine Vorlage aus meinem Skizzenbuch groß ausgeführt werden, auf Wunsch in einer eigenen Farbgebung.",
   "Gearbeitet wird mit Tinte, Grafitstift, Kohle oder Ölpastellkreide — auf Aquarell-, Stein- und Zeichenpapier oder auf Leinwand.",
   "Aus meiner Sammlung gebe ich außerdem Einzelstücke ab. Preise für Einzelaufträge auf Anfrage.",
+];
+
+const PASSION_HEADER = "Das Ausleben einer Leidenschaft";
+
+const PASSION_BODY = [
+  "Ich bin 28, in Leverkusen geboren und 2020 nach Hamburg gezogen \u2014 dort habe ich drei Jahre sp\u00e4ter meine Ausbildung zur illustrativen Designerin abgeschlossen. Als mein kleiner Bruder zur Welt kam, kam auch ein gr\u00f6\u00dferes Auto in die Familie: ein Opel Vectra B Caravan, Baujahr 2002. Er hat meine Begeisterung f\u00fcr Autos geweckt, genau wie Knight Rider und Transformers. F\u00fcr mich als Kind wurde das eigene Auto damit zum Superhelden.",
+  "An die Fahrten zu meinen Gro\u00dfeltern in die Niederlande erinnere ich mich noch gut. Nachts fand ich es besonders spannend, die entgegenkommenden Wagen allein an ihren Lichtern zu erkennen. Seitdem begleiten mich Autos, und meine Wissbegier ist gro\u00df genug, dass ich ab und an in einer Motorradwerkstatt mitarbeite. Mein Opel bleibt selbstverst\u00e4ndlich in der Garage. Daneben w\u00fcnsche ich mir, eines Tages einen Teil meiner Hot-Wheels-Sammlung im Ma\u00dfstab 1:1 zu besitzen \u2014 oder ihn zu fahren, wie ich es in Japan schon durfte. Mit meiner Selbstst\u00e4ndigkeit bleibt dieses Ziel in Sicht, und ich erfahre nebenbei, auf wie unterschiedliche Weise andere Autobegeisterte ihren Traumwagen gefunden haben.",
 ];
 
 const WORDMARK_WIDTHS = [640, 1280, 1920, 2560];
@@ -44,6 +51,7 @@ export default function Home() {
           { label: "Ein Unikat verdient ein Unikat", targetId: "inhalt" },
           { label: "Werke", targetId: "werke" },
           { label: "Der Prozess eines Werkes", targetId: "prozess" },
+          { label: "Das Ausleben einer Leidenschaft", targetId: "leidenschaft" },
         ]}
       />
 
@@ -100,6 +108,18 @@ export default function Home() {
         artwork={processPhoto}
         header={PROCESS_HEADER}
         body={PROCESS_BODY}
+      />
+
+      {/*
+       * Two photographs rather than one: Japan first, because that is the trip
+       * the closing sentence points back to, and the Opel last, where the text
+       * leaves it — in the garage.
+       */}
+      <IntroPanel
+        id="leidenschaft"
+        artwork={passionPhotos}
+        header={PASSION_HEADER}
+        body={PASSION_BODY}
       />
     </main>
   );

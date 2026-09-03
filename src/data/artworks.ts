@@ -47,6 +47,21 @@ const COPY: Record<string, ArtworkCopy> = {
     meta: "Tusche laviert",
     alt: "Lavierte Tuschezeichnung einer Chevrolet Corvette aus erhöhter Perspektive in Blautönen; der Schriftzug „Corvette“ überlagert die Karosserie.",
   },
+  volvo: {
+    title: "Kombi in Orange",
+    meta: "Bleistift und Aquarell",
+    alt: "Bleistift- und Aquarellzeichnung eines orangefarbenen Volvo-Kombis der 1970er Jahre auf einem Blatt: hinten die Seitenansicht, davor gro\u00df die Dreiviertelansicht von vorn mit dem Volvo-Emblem im K\u00fchlergrill.",
+  },
+  volvo2: {
+    title: "Amazon in drei Ansichten",
+    meta: "Bleistift und Aquarell",
+    alt: "Bleistift- und Aquarellzeichnung eines schwarzen Volvo Amazon in drei Studien: Dreiviertelansicht von vorn, Heckansicht und ein Blick in den Innenraum mit rot gepolsterten Sitzen und gro\u00dfem Lenkrad.",
+  },
+  volvo3: {
+    title: "Berlin\u2013Peking",
+    meta: "Bleistift und Aquarell",
+    alt: "Bleistift- und Aquarellzeichnung einer hellgr\u00fcnen Citro\u00ebn DS mit der Startnummer 4 in Dreiviertelansicht von vorn; dar\u00fcber verl\u00e4uft eine gepunktete Route von \u201eBerlin\u201c nach \u201ePeking\u201c.",
+  },
   l: {
     title: "Kleinwagen mit Rauchwolke",
     meta: "Ölpastell, 2013",
@@ -109,6 +124,9 @@ const ORDER = [
   "tinte1",
   "tinte2",
   "tinte3",
+  "volvo",
+  "volvo2",
+  "volvo3",
   "l",
   "buch5",
   "buch8",
@@ -176,6 +194,38 @@ export const processPhoto: Artwork = {
   src: "/artwork/artstalking-1440.webp",
   srcSet: "/artwork/artstalking-960.webp 960w, /artwork/artstalking-1440.webp 1440w",
 };
+
+/**
+ * The two photographs that carry "Das Ausleben einer Leidenschaft".
+ *
+ * Like the process photograph these stay out of the generated manifest: they
+ * are pictures of a person and a car, not plates, and they never appear in the
+ * gallery. Both sources are around 1.5k wide, so they ship at 960 and 1440.
+ */
+export const passionPhotos: Artwork[] = [
+  {
+    slug: "japan-datsun",
+    title: "Fairlady",
+    meta: "Fotografie, Japan",
+    alt: "Die Zeichnerin lehnt l\u00e4chelnd auf der Motorhaube eines dunkelblauen japanischen Sportcoup\u00e9s; im Hintergrund eine bewaldete H\u00fcgelkette.",
+    width: 1748,
+    height: 1166,
+    aspect: 1.4991,
+    src: "/photo/japan-datsun-1440.webp",
+    srcSet: "/photo/japan-datsun-960.webp 960w, /photo/japan-datsun-1440.webp 1440w",
+  },
+  {
+    slug: "konfeti",
+    title: "Konfeti",
+    meta: "Fotografie",
+    alt: "Ein schwarzer Opel Vectra B Caravan mit goldenen Felgen und dem Kennzeichen \u201eKONFETI\u201c steht in Dreiviertelansicht von vorn auf einem Sandweg zwischen D\u00fcnengras.",
+    width: 1536,
+    height: 1024,
+    aspect: 1.5,
+    src: "/photo/konfeti-1440.webp",
+    srcSet: "/photo/konfeti-960.webp 960w, /photo/konfeti-1440.webp 1440w",
+  },
+];
 
 /** Everything else, in reading order, with the photograph pinned to the end. */
 export const galleryArtworks = [...ORDER.map(build), processPhoto];
