@@ -105,20 +105,41 @@ export function BrandDrawer({ revealWith, links, className }: BrandDrawerProps) 
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? "Menü schließen" : "Menü öffnen"}
-        // Slides in from the left edge when it is first needed.
+        // Slides in from the left edge when it is first needed. The mark stands
+        // on the page with nothing behind it; only the glow answers the pointer.
         className={cn(
-          "m-3 flex cursor-pointer items-center justify-center rounded-full bg-brand-navy/70 p-2.5 ring-1 ring-white/15 backdrop-blur-sm",
+          "group relative m-3 flex cursor-pointer items-center justify-center rounded-full p-2.5",
           "transition-[transform,opacity] duration-500 ease-[var(--ease-out-expo)] motion-reduce:transition-none",
-          "hover:bg-brand-navy/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-amber",
+          "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-amber",
           revealed ? "translate-x-0 opacity-100" : "pointer-events-none -translate-x-[130%] opacity-0",
         )}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the Illustrator mark */}
+        {/*
+         * The glow. A radial gradient rather than a blurred disc: it fades to
+         * nothing well inside its own box, so there is no edge to see at any
+         * size, and it costs no filter pass. It sits under the mark and only
+         * appears once the pointer or the keyboard is on the button.
+         */}
+        <span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute -inset-2 -z-10 rounded-full opacity-0",
+            "transition-opacity duration-500 ease-[var(--ease-out-expo)] motion-reduce:transition-none",
+            "group-hover:opacity-100 group-focus-visible:opacity-100",
+          )}
+          style={{
+            background:
+              "radial-gradient(circle closest-side, color-mix(in srgb, var(--color-brand-amber) 40%, transparent) 0%, color-mix(in srgb, var(--color-brand-amber) 24%, transparent) 40%, color-mix(in srgb, var(--color-brand-amber) 8%, transparent) 66%, transparent 100%)",
+          }}
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the mark, cut out in Photoshop */}
         <img
           src="/brand/vectronia-mark-320.webp"
+          srcSet="/brand/vectronia-mark-320.webp 320w, /brand/vectronia-mark-640.webp 640w"
+          sizes="40px"
           alt=""
           width={320}
-          height={318}
+          height={317}
           decoding="async"
           className="h-9 w-9 object-contain md:h-10 md:w-10"
         />

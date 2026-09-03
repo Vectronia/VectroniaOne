@@ -66,10 +66,10 @@ export default function Home() {
         posterSrc={heroArtwork.src}
         posterSrcSet={heroArtwork.srcSet}
         logo={
-          // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the Illustrator mark
+          // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the mark, cut out in Photoshop
           <img
             src="/brand/vectronia-mark-960.webp"
-            srcSet="/brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w"
+            srcSet="/brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w, /brand/vectronia-mark-1440.webp 1440w"
             sizes="(max-width: 768px) 58vh, 114vh"
             alt=""
             width={960}
@@ -80,14 +80,14 @@ export default function Home() {
           />
         }
         wordmark={
-          // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the Illustrator wordmark
+          // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the wordmark, cut out in Photoshop
           <img
             src="/brand/vectronia-one-1920.webp"
             srcSet={WORDMARK_WIDTHS.map((w) => `/brand/vectronia-one-${w}.webp ${w}w`).join(", ")}
             sizes="(max-width: 768px) 86vw, 65vw"
             alt=""
-            width={1728}
-            height={128}
+            width={1920}
+            height={142}
             decoding="async"
             className="h-auto w-full"
           />
