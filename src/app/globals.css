@@ -133,6 +133,22 @@
   text-box: trim-both cap alphabetic;
 }
 
+/*
+ * Keeps light text readable over an image whose brightness is unknown.
+ *
+ * The lightbox dims the page to 30% rather than hiding it, so a caption can
+ * land on anything from a black tyre to white sketch paper. Two shadows do the
+ * work: a tight one for the letter edges, a wide soft one that darkens the
+ * ground around them. Both are black, so over a dark image they stay invisible
+ * and nothing looks stuck on.
+ */
+@utility text-on-scrim {
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.85),
+    0 0 10px rgb(0 0 0 / 0.75),
+    0 0 30px rgb(0 0 0 / 0.55);
+}
+
 @utility text-metal {
   background-image: var(--gradient-metal);
   background-clip: text;

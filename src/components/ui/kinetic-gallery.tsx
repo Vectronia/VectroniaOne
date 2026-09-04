@@ -211,7 +211,24 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
               style={{ maxWidth: active.width, maxHeight: active.height }}
               className="min-h-0 w-auto max-w-full flex-1 rounded-sm object-contain shadow-[0_30px_120px_rgba(0,0,0,0.7)] ring-1 ring-white/15"
             />
-            <figcaption className="shrink-0 text-center">
+            {/*
+             * The caption gets its own ground. The scrim dims the page to 30%
+             * rather than hiding it, so the caption can land on the running
+             * body copy of the panel below — light letters crossing light
+             * letters, which no amount of contrast fixes. This darkens just the
+             * patch under the caption, as a radial gradient that fades out
+             * before its own edge, so nothing reads as a plate stuck on top.
+             * `isolate` keeps the negative z-index inside the caption.
+             */}
+            <figcaption className="text-on-scrim relative isolate shrink-0 text-center">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -inset-x-12 -inset-y-5 -z-10"
+                style={{
+                  background:
+                    "radial-gradient(58% 62% at 50% 50%, rgb(0 0 0 / 0.8) 0%, rgb(0 0 0 / 0.6) 45%, transparent 100%)",
+                }}
+              />
               <span className="font-display text-lg text-rose-200 italic md:text-2xl">
                 {active.title}
               </span>
