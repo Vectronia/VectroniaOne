@@ -149,7 +149,14 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
           ref={figureRef}
           className="will-change-transform lg:relative lg:col-start-1 lg:row-start-2"
         >
-          <div className="flex flex-col gap-6 lg:absolute lg:inset-0">
+          <div
+            className={cn(
+              "flex flex-col gap-6 lg:absolute lg:inset-0",
+              // With several pictures the slack goes between them; a single one
+              // has nowhere to put it and stretches to fill instead.
+              pictures.length > 1 && "lg:justify-between",
+            )}
+          >
             {pictures.map((picture) => (
               // eslint-disable-next-line @next/next/no-img-element -- shares the hero's renditions so the browser reuses the decoded image
               <img
@@ -163,8 +170,19 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
                 loading="lazy"
                 decoding="async"
                 // `min-h-0` lets a flex child shrink below its intrinsic
-                // height; several pictures share the column's height evenly.
-                className="w-full rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px] lg:min-h-0 lg:w-full lg:flex-1"
+                // height, so a short text crops the picture rather than
+                // overflowing the column.
+                //
+                // Only a lone picture stretches to fill. Several keep their own
+                // proportions and sit at the ends of the column, which meets
+                // the rule the same way — first picture on the first line, last
+                // on the last — without the crop: stretching two 3:2 photos to
+                // fill beside a long text squeezed them to nearly square, far
+                // enough to cut a face out of the frame.
+                className={cn(
+                  "w-full rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px] lg:min-h-0 lg:w-full",
+                  pictures.length === 1 && "lg:flex-1",
+                )}
               />
             ))}
           </div>

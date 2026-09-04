@@ -206,8 +206,8 @@ export const passionPhotos: Artwork[] = [
   {
     slug: "japan-datsun",
     title: "Fairlady",
-    meta: "Fotografie, Japan",
-    alt: "Die Zeichnerin lehnt l\u00e4chelnd auf der Motorhaube eines dunkelblauen japanischen Sportcoup\u00e9s; im Hintergrund eine bewaldete H\u00fcgelkette.",
+    meta: "Fotografie, Hakone",
+    alt: "Die Zeichnerin lehnt l\u00e4chelnd auf der Motorhaube eines blauen Datsun 240Z; im Hintergrund eine bewaldete H\u00fcgelkette in Hakone.",
     width: 1748,
     height: 1166,
     aspect: 1.4991,
