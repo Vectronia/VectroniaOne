@@ -200,6 +200,15 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
               width={active.width}
               height={active.height}
               decoding="async"
+              /*
+               * Never shown larger than the pixels it actually has. The plates
+               * scanned at 3000px and up fill the viewport as before and are
+               * untouched by this; the few low-resolution sources stop short
+               * instead of being blown up into mush. Smaller and sharp beats
+               * bigger and soft, and the cap moves with each artwork's own
+               * resolution rather than being a number picked for one of them.
+               */
+              style={{ maxWidth: active.width, maxHeight: active.height }}
               className="min-h-0 w-auto max-w-full flex-1 rounded-sm object-contain shadow-[0_30px_120px_rgba(0,0,0,0.7)] ring-1 ring-white/15"
             />
             <figcaption className="shrink-0 text-center">
