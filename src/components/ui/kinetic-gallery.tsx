@@ -223,18 +223,28 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
             <figcaption className="text-on-scrim relative isolate shrink-0 text-center">
               <span
                 aria-hidden
-                className="pointer-events-none absolute -inset-x-12 -inset-y-5 -z-10"
+                className="pointer-events-none absolute -inset-x-14 -inset-y-7 -z-10"
                 style={{
+                  // Reaches far enough down to hold a three-line caption: with
+                  // the sheet size on its own line the last row of type sat on
+                  // the faded edge of the earlier, shallower gradient.
                   background:
-                    "radial-gradient(58% 62% at 50% 50%, rgb(0 0 0 / 0.8) 0%, rgb(0 0 0 / 0.6) 45%, transparent 100%)",
+                    "radial-gradient(62% 78% at 50% 50%, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.7) 48%, rgb(0 0 0 / 0.34) 76%, transparent 100%)",
                 }}
               />
-              <span className="font-display text-lg text-rose-200 italic md:text-2xl">
+              <span className="block max-w-[34ch] text-balance font-display text-lg text-rose-200 italic md:text-2xl">
                 {active.title}
               </span>
               <span className="mt-0.5 block text-xs tracking-[0.18em] text-fg-muted uppercase">
                 {active.meta}
               </span>
+              {/* Paper and sheet size sit on their own line: set in the same
+                  wide-tracked capitals they would run past the picture. */}
+              {active.format && (
+                <span className="mt-0.5 block text-[0.6875rem] tracking-[0.14em] text-fg-muted/70 uppercase">
+                  {active.format}
+                </span>
+              )}
             </figcaption>
           </figure>
           <button
