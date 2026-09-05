@@ -43,9 +43,29 @@ const IN_PHOTO = { brightness: 1, contrast: 1, saturate: 1 };
  * on the reference position gives 59.62vh x 82.83vh at left calc(68.52vw -
  * 42.36vh), top 8.17vh — the classes below.
  *
- * Those proportions come from a 16:9 comp, so they only apply from md up; a
- * narrow viewport gets a centred arrangement instead. The classes are written
- * out in full because Tailwind only emits what it can read literally.
+ * A phone follows a second reference, mobileStart.psd, on a 390x844 canvas --
+ * a different composition, not a squeezed one: the wordmark moves to the head
+ * of the screen, the logo sits mid-left, and the car crosses the foot and
+ * bleeds off the right edge. Read the same way:
+ *
+ *   wordmark  (20,76)-(372,103)    90.26vw wide, left 5.13vw, top 9.00vh
+ *   logo      (-68,139)-(367,571)  111.54vw wide, left -17.44vw, top 16.47vh
+ *   car       (12,475)-(526,754)   131.79vw wide, left 3.08vw, top 56.28vh
+ *
+ * Solving the car's frame back from its painted target gives 137.52vw wide at
+ * left -1.36vw, top 44.76vh -- landing the painted car within 0.1px of the
+ * reference. The three are sized in vw rather than vh so the horizontal
+ * framing, which is what carries this composition, holds on any phone; only
+ * the vertical has slack to give.
+ *
+ * The logo and the car are capped against the height as well. Width alone put
+ * the car 19px past the bottom edge of a 375x620 screen -- a phone showing its
+ * browser bars. The caps are the reference's own proportions, 51.18vh and
+ * 45.74vh, so at 390x844 they change nothing and only a short screen ever
+ * meets them.
+ *
+ * The classes are written out in full because Tailwind only emits what it can
+ * read literally.
  *
  * None of the three may be placed with a translate utility. GSAP writes the
  * whole `transform` property, so a CSS translate is erased the moment a tween
@@ -259,7 +279,7 @@ export function HeroStage({
         <div
           ref={logoRef}
           aria-hidden
-          className="pointer-events-none absolute top-[calc(50%-29vh)] left-[-17.6vh] z-10 h-[58vh] will-change-transform md:top-[8.07vh] md:left-[-4.95vh] md:h-[112.63vh]"
+          className="pointer-events-none absolute top-[16.47vh] left-[-17.44vw] z-10 h-[min(110.61vw,51.18vh)] will-change-transform md:top-[8.07vh] md:left-[-4.95vh] md:h-[112.63vh]"
         >
           {logo}
         </div>
@@ -296,13 +316,13 @@ export function HeroStage({
         {/* The cut-out, at the reference position until it is carried across. */}
         <div
           ref={carRef}
-          className="absolute top-[calc(50%-21vh)] left-[calc(50%-29.17vh)] z-30 h-[42vh] w-[58.35vh] will-change-[transform,filter] md:top-[8.17vh] md:left-[calc(68.52vw-42.36vh)] md:h-[59.62vh] md:w-[82.83vh]"
+          className="absolute top-[44.76vh] left-[-1.36vw] z-30 h-[min(98.98vw,45.74vh)] w-[min(137.52vw,63.55vh)] will-change-[transform,filter] md:top-[8.17vh] md:left-[calc(68.52vw-42.36vh)] md:h-[59.62vh] md:w-[82.83vh]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
           <img
             src={cutoutSrc}
             srcSet={cutoutSrcSet}
-            sizes="(max-width: 768px) 96vw, 83svh"
+            sizes="(max-width: 768px) 138vw, 83svh"
             alt={artworkAlt}
             width={1920}
             height={1382}
@@ -315,7 +335,7 @@ export function HeroStage({
         <div
           ref={wordRef}
           aria-hidden
-          className="pointer-events-none absolute bottom-[8vh] left-[7vw] z-10 w-[86vw] will-change-transform md:bottom-auto md:top-[72.66vh] md:left-[32.58vw] md:w-[64.42vw]"
+          className="pointer-events-none absolute top-[9vh] left-[5.13vw] z-10 w-[90.26vw] will-change-transform md:top-[72.66vh] md:left-[32.58vw] md:w-[64.42vw]"
         >
           {wordmark}
         </div>

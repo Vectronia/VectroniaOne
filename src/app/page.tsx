@@ -71,7 +71,7 @@ export default function Home() {
           <img
             src="/brand/vectronia-mark-960.webp"
             srcSet="/brand/vectronia-mark-640.webp 640w, /brand/vectronia-mark-960.webp 960w, /brand/vectronia-mark-1440.webp 1440w"
-            sizes="(max-width: 768px) 58vh, 114vh"
+            sizes="(max-width: 768px) 112vw, 114vh"
             alt=""
             width={960}
             height={952}
@@ -85,7 +85,7 @@ export default function Home() {
           <img
             src="/brand/vectronia-one-1920.webp"
             srcSet={WORDMARK_WIDTHS.map((w) => `/brand/vectronia-one-${w}.webp ${w}w`).join(", ")}
-            sizes="(max-width: 768px) 86vw, 65vw"
+            sizes="(max-width: 768px) 90vw, 65vw"
             alt=""
             width={1920}
             height={142}
