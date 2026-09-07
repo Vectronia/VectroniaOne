@@ -247,5 +247,18 @@ export const passionPhotos: Artwork[] = [
   },
 ];
 
+/** The sheet that carries the contact panel. */
+export const contactPhoto: Artwork = {
+  slug: "kontakt",
+  title: "Drei Studien",
+  meta: "Bleistift und Tinte",
+  alt: "Freigestellte Zeichnung dreier Fahrzeuge: ein Hot Rod der 1930er Jahre, ein Coup\u00e9 der 1980er Jahre und, gro\u00df im Vordergrund, eine Chevrolet Corvette Stingray.",
+  width: 1738,
+  height: 860,
+  aspect: 2.0209,
+  src: "/photo/kontakt-1440.webp",
+  srcSet: "/photo/kontakt-960.webp 960w, /photo/kontakt-1440.webp 1440w",
+};
+
 /** Everything else, in reading order, with the photograph pinned to the end. */
 export const galleryArtworks = [...ORDER.map(build), processPhoto];

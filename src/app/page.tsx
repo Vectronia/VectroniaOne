@@ -3,7 +3,14 @@ import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
-import { galleryArtworks, heroArtwork, passionPhotos, processPhoto } from "@/data/artworks";
+import { ContactForm } from "@/components/ui/contact-form";
+import {
+  contactPhoto,
+  galleryArtworks,
+  heroArtwork,
+  passionPhotos,
+  processPhoto,
+} from "@/data/artworks";
 
 const INTRO_HEADER = "Ein Unikat verdient ein Unikat";
 
@@ -26,6 +33,12 @@ const PASSION_BODY = [
   "2020 bin ich von Leverkusen nach Hamburg gezogen. Dort begann meine Ausbildung zur Illustrationsdesignerin an der HTK in Bahrenfeld, die ich Ende 2023 mit dem Diplom abgeschlossen habe. Nun habe ich beschlossen, meine Leidenschaft f\u00fcr Autos mit dieser Arbeit zu verschwei\u00dfen.",
   "Schon als Kind habe ich auf Autofahrten die Stra\u00dfen beobachtet und jede Marke und jedes Modell laut benannt \u2014 zum Leidwesen meiner Eltern. Als ich dann Serien wie Knight Rider und Transformers zu sehen begann, dachte ich unseren Familienwagen kurzerhand zum Superauto um. Von da an half ich beim Reifenwechsel und bei der Pflege, und 2017 ging er in meinen Besitz \u00fcber \u2014 wo er vermutlich auch bleiben wird.",
   "Inzwischen habe ich einen eigenen Traumwagen vor Augen: einen Datsun 240Z in Blau, genau so einen, wie ich ihn in Japan auf einer Hakone-Tour bereits gemietet habe. Diese Fahrt hat den Wunsch nur unterstrichen. Durch meine Arbeit stehe ich mit vielen Autobegeisterten in Kontakt und erfahre, auf wie unterschiedlichen Wegen sie zu ihrem Traumwagen gekommen sind; das inspiriert und motiviert mich immer wieder. Ich w\u00fcnsche mir, dass sich mit meinen Werken die Begeisterung f\u00fcr ein Fahrzeug \u2014 welcher Art auch immer \u2014 genauso wahrhaftig festhalten l\u00e4sst. Denn genau das ist es, was diese Gemeinschaft zusammenh\u00e4lt und besonders macht.",
+];
+
+const CONTACT_HEADER = "Sprechen wir über dein Fahrzeug";
+
+const CONTACT_BODY = [
+  "Ob nach einem Foto, vor Ort auf einem Treffen oder als gro\u00dfe Ausf\u00fchrung einer Skizzenbuchseite \u2014 schreib mir, was dir vorschwebt. Eine E-Mail-Adresse gen\u00fcgt, alles Weitere kl\u00e4ren wir in Ruhe miteinander.",
 ];
 
 const WORDMARK_WIDTHS = [640, 1280, 1920, 2560];
@@ -53,6 +66,7 @@ export default function Home() {
           { label: "Werke", targetId: "werke" },
           { label: "Der Prozess eines Werkes", targetId: "prozess" },
           { label: "Das Ausleben einer Leidenschaft", targetId: "leidenschaft" },
+          { label: "Kontakt", targetId: "kontakt" },
         ]}
       />
 
@@ -122,6 +136,19 @@ export default function Home() {
         header={PASSION_HEADER}
         body={PASSION_BODY}
       />
+
+      {/* The page closes mirrored: the copy and the field on the left, the
+          sheet on the right, so the last panel reads the other way round. */}
+      <IntroPanel
+        id="kontakt"
+        reversed
+        bare
+        artwork={contactPhoto}
+        header={CONTACT_HEADER}
+        body={CONTACT_BODY}
+      >
+        <ContactForm />
+      </IntroPanel>
     </main>
   );
 }

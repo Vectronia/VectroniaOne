@@ -22,6 +22,20 @@ export type IntroPanelProps = {
   header: string;
   /** One entry per paragraph. */
   body?: string[];
+  /**
+   * Mirrors the panel: copy on the left, picture on the right. The ranged edge
+   * of the type follows, so it still meets the picture rather than turning its
+   * back on it.
+   */
+  reversed?: boolean;
+  /** Rendered under the copy — the contact panel puts its form here. */
+  children?: React.ReactNode;
+  /**
+   * For artwork that is cut out rather than photographed: no frame, and free
+   * to run wider than its column. A card around a cut-out would put back the
+   * sheet edge it was cut from.
+   */
+  bare?: boolean;
   id?: string;
   className?: string;
 };
@@ -46,8 +60,25 @@ function usePrefersReducedMotion() {
  * `ARTWORK_TRAVEL` percent to the right until its trigger fires, which on a
  * narrow viewport is wide enough to open a horizontal scrollbar.
  */
-export function IntroPanel({ artwork, header, body, id, className }: IntroPanelProps) {
+export function IntroPanel({
+  artwork,
+  header,
+  body,
+  reversed,
+  children,
+  bare,
+  id,
+  className,
+}: IntroPanelProps) {
   const pictures = Array.isArray(artwork) ? artwork : [artwork];
+  /*
+   * A lone picture stretches to fill the column, which is what puts it flush
+   * with the first and last line of the copy. That only holds while the column
+   * beside it is copy: with a form under the text the column runs far taller
+   * than any picture's proportions, and the 16:9 contact sheet came out
+   * squeezed to 0.81 — 46% of the frame left, two of its three cars gone.
+   */
+  const fills = pictures.length === 1 && !children;
   const sectionRef = useRef<HTMLElement>(null);
   const figureRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -67,7 +98,7 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
       // An IntersectionObserver drives this rather than a ScrollTrigger: the
       // trigger's cached start position was stale on first load and left the
       // whole panel at opacity 0 for seconds after it had entered the viewport.
-      gsap.set(figureRef.current, { xPercent: ARTWORK_TRAVEL, opacity: 0 });
+      gsap.set(figureRef.current, { xPercent: reversed ? -ARTWORK_TRAVEL : ARTWORK_TRAVEL, opacity: 0 });
       // Opacity only for the copy — any vertical offset here would break its
       // alignment with the artwork for as long as the tween runs.
       gsap.set(textRef.current, { opacity: 0 });
@@ -98,7 +129,7 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
       io?.disconnect();
       ctx.revert();
     };
-  }, [reduced]);
+  }, [reduced, reversed]);
 
   return (
     <section
@@ -127,11 +158,19 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
        * the same height — the picture then starts on the first line of text and
        * finishes on the last.
        */}
-      <div className="relative mx-auto grid max-w-6xl gap-y-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-stretch lg:gap-x-16 lg:gap-y-12">
-        <div className="lg:col-start-2 lg:row-start-1">
+      <div
+        className={cn(
+          "relative mx-auto grid max-w-6xl gap-y-10 lg:items-stretch lg:gap-x-16 lg:gap-y-12",
+          reversed ? "lg:grid-cols-[1.15fr_0.85fr]" : "lg:grid-cols-[0.85fr_1.15fr]",
+        )}
+      >
+        <div className={cn("lg:row-start-1", reversed ? "lg:col-start-1" : "lg:col-start-2")}>
           <h2
             id={id ? `${id}-header` : undefined}
-            className="text-metal font-display text-3xl font-semibold text-balance italic md:text-4xl lg:text-right lg:text-5xl"
+            className={cn(
+              "text-metal font-display text-3xl font-semibold text-balance italic md:text-4xl lg:text-5xl",
+              reversed ? "lg:text-left" : "lg:text-right",
+            )}
           >
             {header}
           </h2>
@@ -147,14 +186,17 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
          */}
         <div
           ref={figureRef}
-          className="will-change-transform lg:relative lg:col-start-1 lg:row-start-2"
+          className={cn(
+            "will-change-transform lg:relative lg:row-start-2",
+            reversed ? "lg:col-start-2" : "lg:col-start-1",
+          )}
         >
           <div
             className={cn(
               "flex flex-col gap-6 lg:absolute lg:inset-0",
               // With several pictures the slack goes between them; a single one
               // has nowhere to put it and stretches to fill instead.
-              pictures.length > 1 && "lg:justify-between",
+              !fills && "lg:justify-between",
             )}
           >
             {pictures.map((picture) => (
@@ -180,23 +222,54 @@ export function IntroPanel({ artwork, header, body, id, className }: IntroPanelP
                 // fill beside a long text squeezed them to nearly square, far
                 // enough to cut a face out of the frame.
                 className={cn(
-                  "w-full rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px] lg:min-h-0 lg:w-full",
-                  pictures.length === 1 && "lg:flex-1",
+                  "w-full lg:min-h-0 lg:w-full",
+                  fills && "lg:flex-1",
+                  bare
+                    ? // A drop shadow follows the silhouette; a box shadow
+                      // would draw the rectangle that is not there.
+                      "object-contain drop-shadow-[0_22px_44px_rgba(0,0,0,0.6)] lg:max-w-none"
+                    : "rounded-[12px] object-cover shadow-[0_24px_90px_rgba(0,0,0,0.55)] ring-1 ring-white/10 md:rounded-[16px]",
                 )}
+                /*
+                 * A cut-out runs wider than its column, but only as far as the
+                 * page has room beside it. A flat 126% put the lead car's nose
+                 * through the window edge from 1280px down, where the centred
+                 * container already ends at the page margin. This spends what
+                 * the container leaves, less a margin, and nothing when there
+                 * is none.
+                 */
+                style={
+                  bare
+                    ? { width: "min(126%, 100% + max(0px, (100vw - 72rem) / 2 - 1rem))" }
+                    : undefined
+                }
               />
             ))}
           </div>
         </div>
 
-        <div ref={textRef} className="text-box-trim lg:col-start-2 lg:row-start-2">
+        <div
+          ref={textRef}
+          className={cn(
+            "text-box-trim lg:row-start-2",
+            reversed ? "lg:col-start-1" : "lg:col-start-2",
+          )}
+        >
           {body?.map((paragraph, index) => (
             <p
               key={paragraph}
-              className={cn("body-copy max-w-[62ch] text-fg-muted", index > 0 && "mt-6")}
+              className={cn(
+                "body-copy max-w-[62ch] text-fg-muted",
+                index > 0 && "mt-6",
+                // Justified copy flushes every line but the last; that one goes
+                // to whichever side the picture is on.
+                reversed && "[text-align-last:left]",
+              )}
             >
               {paragraph}
             </p>
           ))}
+          {children && <div className="mt-10">{children}</div>}
         </div>
       </div>
     </section>
