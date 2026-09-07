@@ -2,6 +2,7 @@ import { BrandDrawer } from "@/components/ui/brand-drawer";
 import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
+import { SiteFooter } from "@/components/ui/site-footer";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
 import { ContactForm } from "@/components/ui/contact-form";
 import {
@@ -149,6 +150,8 @@ export default function Home() {
       >
         <ContactForm />
       </IntroPanel>
+
+      <SiteFooter />
     </main>
   );
 }
