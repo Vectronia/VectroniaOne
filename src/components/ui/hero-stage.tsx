@@ -15,8 +15,21 @@ const CARD_VH = 0.52;
 const IMMERSE_OVERFILL = 1.04;
 /** Progress at which the car has finished landing in the photo. */
 const LANDED_AT = 0.2;
-/** Progress at which the immersion ends and the release begins. */
-const RELEASE_AT = 0.8;
+/** Progress by which logo and wordmark have left the stage. */
+const MARKS_OUT_AT = 0.144;
+/** Progress at which the photograph starts to appear — after the marks. */
+const POSTER_IN_AT = 0.15;
+/** Progress at which the photograph has taken the whole screen. */
+const FILLED_AT = 0.68;
+/**
+ * How much further it drifts forward over the rest of the track.
+ *
+ * The hero ends inside the picture rather than pulling back out of it, so
+ * there is nothing left to animate after it fills the screen — and a frozen
+ * image under a moving page reads as a stall. This keeps it creeping forward
+ * until the section scrolls away.
+ */
+const SETTLE_DRIFT = 1.06;
 
 /**
  * How the cut-out is treated while it floats on the dark ground.
@@ -138,6 +151,7 @@ export function HeroStage({
   const cardRef = useRef<HTMLDivElement>(null);
   const posterRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
+  const seamRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -176,6 +190,7 @@ export function HeroStage({
 
       gsap.set(card, { scale: 1, transformOrigin: "50% 50%" });
       gsap.set(posterRef.current, { opacity: 0 });
+      gsap.set(seamRef.current, { opacity: 0 });
 
       // Card and cut-out scale together once landed, so they stay registered.
       const zoom = { value: 1 };
@@ -195,8 +210,14 @@ export function HeroStage({
       });
 
       // 1 — the marks clear the stage and the car settles into the photograph.
-      master.to(logoRef.current, { xPercent: -140, ease: "power2.in", duration: LANDED_AT }, 0);
-      master.to(wordRef.current, { xPercent: 140, ease: "power2.in", duration: LANDED_AT }, 0);
+      //
+      // They finish well before the car lands, because the photograph may not
+      // show while they are still on screen: it used to reach 27% opacity with
+      // the wordmark barely moved, so a grey rectangle rose straight through
+      // the lettering. `power2.in` starts slow, so most of the travel happens
+      // in the last part of that window — the fade below waits for it.
+      master.to(logoRef.current, { xPercent: -140, ease: "power2.in", duration: MARKS_OUT_AT }, 0);
+      master.to(wordRef.current, { xPercent: 140, ease: "power2.in", duration: MARKS_OUT_AT }, 0);
       master.to(cueRef.current, { opacity: 0, ease: "power1.in", duration: 0.06 }, 0);
       master.to(
         car,
@@ -214,27 +235,47 @@ export function HeroStage({
         { ...IN_PHOTO, ease: "power1.inOut", duration: LANDED_AT, onUpdate: applyTone },
         0,
       );
+      // The photograph only appears once the marks are off the stage, and is
+      // fully there by the time the cut-out settles onto it.
       master.to(
         posterRef.current,
-        { opacity: 1, ease: "power1.inOut", duration: LANDED_AT * 0.8 },
-        LANDED_AT * 0.2,
+        { opacity: 1, ease: "power1.inOut", duration: LANDED_AT - POSTER_IN_AT },
+        POSTER_IN_AT,
       );
 
-      // 2 — immersion, and 3 — release.
+      // 2 — the photograph takes the screen and stays taken. It used to shrink
+      // back to a card over the last fifth, which put the same picture on
+      // screen twice in a row: once as a card the hero handed back, then again
+      // in the panel below. Now the hero ends inside it and the page scrolls
+      // out of the picture instead of the picture withdrawing from the page.
       master.to(
         zoom,
         {
           value: () => immerseScale(),
           ease: "power2.in",
-          duration: RELEASE_AT - LANDED_AT,
+          duration: FILLED_AT - LANDED_AT,
           onUpdate: applyZoom,
         },
         LANDED_AT,
       );
       master.to(
         zoom,
-        { value: 1, ease: "power3.inOut", duration: 1 - RELEASE_AT, onUpdate: applyZoom },
-        RELEASE_AT,
+        {
+          value: () => immerseScale() * SETTLE_DRIFT,
+          ease: "none",
+          duration: 1 - FILLED_AT,
+          onUpdate: applyZoom,
+        },
+        FILLED_AT,
+      );
+      // 3 — the lower edge melts into the ground the next section starts on.
+      // Without it the picture met the panel as a hard light-to-dark line,
+      // which is the one place the handover reads as a cut rather than a
+      // transition. It stays clear while you are inside the picture.
+      master.to(
+        seamRef.current,
+        { opacity: 1, ease: "power2.in", duration: 1 - FILLED_AT },
+        FILLED_AT,
       );
 
       ScrollTrigger.refresh();
@@ -339,6 +380,17 @@ export function HeroStage({
         >
           {wordmark}
         </div>
+
+        {/* Closes the seam to the section below; see phase 3 above. */}
+        <div
+          ref={seamRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-40 h-[26vh]"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--color-brand-teal) 56%, #000) 100%)",
+          }}
+        />
 
         <div
           ref={cueRef}
