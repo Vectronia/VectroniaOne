@@ -168,7 +168,7 @@ export function IntroPanel({
           <h2
             id={id ? `${id}-header` : undefined}
             className={cn(
-              "text-metal font-display text-3xl font-semibold text-balance italic md:text-4xl lg:text-5xl",
+              "text-metal font-display text-3xl font-semibold text-balance italic text-center md:text-4xl lg:text-5xl",
               reversed ? "lg:text-left" : "lg:text-right",
             )}
           >
@@ -262,8 +262,10 @@ export function IntroPanel({
                 "body-copy max-w-[62ch] text-fg-muted",
                 index > 0 && "mt-6",
                 // Justified copy flushes every line but the last; that one goes
-                // to whichever side the picture is on.
-                reversed && "[text-align-last:left]",
+                // to whichever side the picture is on — but only once there is
+                // a side. Below lg the text stands under the picture and the
+                // last line centres with the heading.
+                reversed && "lg:[text-align-last:left]",
               )}
             >
               {paragraph}

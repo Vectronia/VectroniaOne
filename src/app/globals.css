@@ -106,6 +106,15 @@
    * unbroken right edge, which is what the ranged-right heading meets.
    */
   text-align-last: right;
+  /*
+   * That right edge only means something while the text stands beside a
+   * picture. On a phone it stands under one, centred beneath a centred
+   * heading, and a last line pulled to the right would hang off the
+   * composition. Centred instead — the old finish for a justified block.
+   */
+  @media (width < 64rem) {
+    text-align-last: center;
+  }
   text-justify: inter-word;
   -webkit-hyphens: auto;
   hyphens: auto;

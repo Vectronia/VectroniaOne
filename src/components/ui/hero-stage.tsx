@@ -345,7 +345,7 @@ export function HeroStage({
           </div>
 
           <div ref={textRef} className="text-box-trim w-full lg:col-start-2">
-            <h2 className="text-metal font-display text-2xl font-semibold text-balance italic md:text-3xl lg:text-right lg:text-4xl xl:text-5xl">
+            <h2 className="text-metal font-display text-2xl font-semibold text-balance italic text-center md:text-3xl lg:text-right lg:text-4xl xl:text-5xl">
               {header}
             </h2>
             {body.map((paragraph, index) => (
