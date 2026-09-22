@@ -39,7 +39,7 @@ export const LEGAL: LegalDetails = {
   careOf: "c/o Bathrellou",
   street: "Kölnstraße 107",
   city: "53111 Bonn",
-  email: TODO,
+  email: "kunst@vectronia-one.de",
   phone: "",
   vatId: "",
   smallBusiness: true,
