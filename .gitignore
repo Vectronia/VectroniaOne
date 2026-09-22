@@ -42,3 +42,7 @@ next-env.d.ts
 
 # ... außer der Vorlage, die dokumentiert, welche Werte gebraucht werden.
 !.env.example
+
+# Das gebaute Upload-Paket.
+/dist
+/dist.zip
