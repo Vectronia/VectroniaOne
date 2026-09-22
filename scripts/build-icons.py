@@ -8,7 +8,7 @@ Writes src/app/icon.svg, favicon.ico and apple-icon.png, which Next.js picks up
 by filename — no markup needed.
 
 The tab icon is a flat silhouette with no tile behind it, traced from the
-mark's own alpha. It carries its colour from the browser theme: near-black on a
+mark's own alpha and cut to its dense part — see ICON_WIDTH. It carries its colour from the browser theme: near-black on a
 light chrome, the page's warm off-white on a dark one. That is what lets it
 drop the tile — the chrome supplies the ground, so the mark does not have to.
 A single-colour raster cannot do that, which is why this one is a vector.
@@ -38,11 +38,30 @@ APP = REPO / "src" / "app"
 NAVY = (25, 28, 40, 255)
 
 
-def trimmed_mark() -> Image.Image:
+# How much of the mark's width the icon keeps.
+#
+# The arc tapers away to the right, and the last third of the width carries
+# only 5-6% ink against 19-49% across the rest. Fitted whole into a square that
+# thin end becomes a stray line trailing out of a 16px tile — legible as a
+# scratch, not as part of the mark. Cutting there lifts coverage from 21% to
+# 31% and lets the arc end on a real edge.
+ICON_WIDTH = 0.62
+
+
+def trimmed_mark(width: float = 1.0) -> Image.Image:
+    """The mark's painted bounds, optionally keeping only its left part."""
     mark = Image.open(REPO / "public/brand/vectronia-mark-1440.webp").convert("RGBA")
     alpha = np.asarray(mark)[..., 3]
     ys, xs = np.nonzero(alpha > 8)
-    return mark.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+    mark = mark.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+
+    if width < 1.0:
+        mark = mark.crop((0, 0, round(mark.width * width), mark.height))
+        # Re-trim: the cut usually leaves a band of empty rows behind.
+        alpha = np.asarray(mark)[..., 3]
+        ys, xs = np.nonzero(alpha > 8)
+        mark = mark.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+    return mark
 
 
 def tile(mark: Image.Image, size: int, pad: float) -> Image.Image:
@@ -82,7 +101,7 @@ def silhouette_path(mark: Image.Image) -> tuple[str, int, int]:
 
 
 def main() -> None:
-    mark = trimmed_mark()
+    mark = trimmed_mark(ICON_WIDTH)
 
     d, w, h = silhouette_path(mark)
     (APP / "icon.svg").write_text(
