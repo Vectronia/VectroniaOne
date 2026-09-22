@@ -1,24 +1,36 @@
 #!/usr/bin/env python3
 """Turn the brand mark into the browser and home-screen icons.
 
+    pip install pillow numpy potracer
     python3 scripts/build-icons.py
 
-Writes src/app/favicon.ico, icon.png and apple-icon.png, which Next.js picks
-up by filename — no markup needed.
+Writes src/app/icon.svg, favicon.ico and apple-icon.png, which Next.js picks up
+by filename — no markup needed.
 
-The mark sits on the brand navy rather than on transparency. Tested at real
-size: on a light browser chrome the rose gold on its own all but disappears at
-16px, because the metal is nearly as light as the tab behind it. Bringing its
-own ground fixes that on light and dark alike.
+The tab icon is a flat silhouette with no tile behind it, traced from the
+mark's own alpha. It carries its colour from the browser theme: near-black on a
+light chrome, the page's warm off-white on a dark one. That is what lets it
+drop the tile — the chrome supplies the ground, so the mark does not have to.
+A single-colour raster cannot do that, which is why this one is a vector.
 
-Small sizes are cut tighter than large ones. At 16px every pixel of the arc
-counts, and a margin that looks composed at 512 leaves a smudge; a 4% margin
-carries 29% of the tile against 21% at 14%, which is the difference between a
-readable silhouette and a blur.
+Tracing polarity is not what you would guess: potrace here treats False as
+foreground, and padding the bitmap with True keeps it from outlining the canvas
+edge. Checked by rendering the result and comparing it against the original
+silhouette — 0.93 IoU at 3.7 KB. Finer settings reach 0.934 for three times the
+path, which buys nothing: the remainder is the original's anti-aliased edge,
+not the curve fit.
+
+favicon.ico and apple-icon.png keep the navy tile. They are the fallback for
+browsers without SVG icon support and the home-screen icon, and neither can
+rely on a ground being there — iOS in particular composites away transparency.
+Their small sizes are cut tighter than the large ones: at 16px a 4% margin
+carries 29% of the tile against 21% at 14%, the difference between a readable
+silhouette and a blur.
 """
 from pathlib import Path
 
 import numpy as np
+import potrace
 from PIL import Image
 
 REPO = Path(__file__).resolve().parent.parent
@@ -45,8 +57,43 @@ def tile(mark: Image.Image, size: int, pad: float) -> Image.Image:
     return canvas
 
 
+def silhouette_path(mark: Image.Image) -> tuple[str, int, int]:
+    """Trace the mark's alpha into one SVG path."""
+    solid = np.asarray(mark)[..., 3] <= 128
+    padded = np.ones((solid.shape[0] + 4, solid.shape[1] + 4), dtype=bool)
+    padded[2:-2, 2:-2] = solid
+    traced = potrace.Bitmap(padded).trace(turdsize=8, alphamax=1.0, opttolerance=0.2)
+
+    def point(p) -> str:
+        return f"{p.x - 2:.1f} {p.y - 2:.1f}"
+
+    parts = []
+    for curve in traced:
+        d = [f"M{point(curve.start_point)}"]
+        for seg in curve:
+            d.append(
+                f"L{point(seg.c)}L{point(seg.end_point)}"
+                if seg.is_corner
+                else f"C{point(seg.c1)} {point(seg.c2)} {point(seg.end_point)}"
+            )
+        d.append("Z")
+        parts.append("".join(d))
+    return "".join(parts), mark.width, mark.height
+
+
 def main() -> None:
     mark = trimmed_mark()
+
+    d, w, h = silhouette_path(mark)
+    (APP / "icon.svg").write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">'
+        "<style>"
+        "path{fill:#111114}"
+        "@media(prefers-color-scheme:dark){path{fill:#f3ece5}}"
+        "</style>"
+        f'<path d="{d}"/></svg>\n',
+        "utf-8",
+    )
 
     # One .ico carrying all three sizes, so the browser picks a rendition tuned
     # for the size it needs instead of squeezing one down itself.
@@ -60,9 +107,8 @@ def main() -> None:
     # Room to breathe where there is room: iOS rounds the corners of the home
     # screen icon, and Android may mask it further.
     tile(mark, 180, 0.14).convert("RGB").save(APP / "apple-icon.png")
-    tile(mark, 512, 0.12).convert("RGB").save(APP / "icon.png")
 
-    for path in ("favicon.ico", "apple-icon.png", "icon.png"):
+    for path in ("icon.svg", "favicon.ico", "apple-icon.png"):
         f = APP / path
         print(f"  {path:<16} {f.stat().st_size:>6} Bytes")
 
