@@ -9,27 +9,16 @@ import { cn } from "@/lib/utils";
 gsap.registerPlugin(ScrollTrigger);
 
 /** Height of the scroll track, in viewport heights. */
-const TRACK_VH = 3.6;
-/** Card height as a share of the viewport once the car has landed. */
-const CARD_VH = 0.52;
-const IMMERSE_OVERFILL = 1.04;
-/** Progress at which the car has finished landing in the photo. */
-const LANDED_AT = 0.2;
+const TRACK_VH = 2.4;
 /** Progress by which logo and wordmark have left the stage. */
-const MARKS_OUT_AT = 0.144;
+const MARKS_OUT_AT = 0.16;
 /** Progress at which the photograph starts to appear — after the marks. */
-const POSTER_IN_AT = 0.15;
-/** Progress at which the photograph has taken the whole screen. */
-const FILLED_AT = 0.68;
-/**
- * How much further it drifts forward over the rest of the track.
- *
- * The hero ends inside the picture rather than pulling back out of it, so
- * there is nothing left to animate after it fills the screen — and a frozen
- * image under a moving page reads as a stall. This keeps it creeping forward
- * until the section scrolls away.
- */
-const SETTLE_DRIFT = 1.06;
+const POSTER_IN_AT = 0.17;
+/** Progress at which the car has finished landing in the photograph. */
+const LANDED_AT = 0.32;
+/** When the copy begins to arrive, and how long it takes. */
+const TEXT_IN_AT = 0.36;
+const TEXT_IN_FOR = 0.24;
 
 /**
  * How the cut-out is treated while it floats on the dark ground.
@@ -99,6 +88,10 @@ export type HeroStageProps = {
   artworkAlt: string;
   /** Accessible heading; the visible brand marks are artwork. */
   heading: string;
+  /** The line the hero settles on, set beside the photograph. */
+  header: string;
+  /** One entry per paragraph, revealed once the car has landed. */
+  body: string[];
   /** Brand mark, shown large and bleeding off the left edge. */
   logo: React.ReactNode;
   /** Wordmark, shown along the lower edge. */
@@ -137,6 +130,8 @@ export function HeroStage({
   posterSrcSet,
   artworkAlt,
   heading,
+  header,
+  body,
   logo,
   wordmark,
   id,
@@ -147,39 +142,56 @@ export function HeroStage({
   const sectionRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const carRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const posterRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
-  const seamRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
     if (reduced) return;
     const section = sectionRef.current;
+    const stage = stageRef.current;
     const car = carRef.current;
     const card = cardRef.current;
-    if (!section || !car || !card) return;
+    if (!section || !stage || !car || !card) return;
 
     const ctx = gsap.context(() => {
-      const immerseScale = () => {
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const baseW = Math.min(vw * 0.96, vh * CARD_VH * aspect);
-        const baseH = Math.min(vh * CARD_VH, (vw * 0.96) / aspect);
-        if (baseW <= 0 || baseH <= 0) return 1.5;
-        return Math.max(vw / baseW, vh / baseH) * IMMERSE_OVERFILL;
-      };
-
       // Landing is measured from the two untransformed layout boxes, so the
       // cut-out finishes exactly over the photograph at any viewport. `offset*`
       // rather than getBoundingClientRect, because the latter already includes
       // whatever transform the tween has applied.
-      const landing = () => ({
-        x: card.offsetLeft + card.offsetWidth / 2 - (car.offsetLeft + car.offsetWidth / 2),
-        y: card.offsetTop + card.offsetHeight / 2 - (car.offsetTop + car.offsetHeight / 2),
-        scale: card.offsetWidth / car.offsetWidth,
-      });
+      //
+      // The two boxes no longer share an offset parent: the car is placed
+      // against the stage, while the card sits inside the composition wrapper
+      // that lays the photograph out beside the sentence. So each is summed up
+      // its own offsetParent chain to the stage, which both have in common.
+      // Reading offsetLeft/offsetTop alone put the car 143x251px off the
+      // photograph at 1440 wide while landing correctly on a phone, where the
+      // wrapper is not positioned differently from the stage.
+      const offsetInStage = (el: HTMLElement) => {
+        let x = 0;
+        let y = 0;
+        let node: HTMLElement | null = el;
+        while (node && node !== stage) {
+          x += node.offsetLeft;
+          y += node.offsetTop;
+          node = node.offsetParent as HTMLElement | null;
+        }
+        return { x, y };
+      };
+
+      const landing = () => {
+        const target = offsetInStage(card);
+        const origin = offsetInStage(car);
+        return {
+          x: target.x + card.offsetWidth / 2 - (origin.x + car.offsetWidth / 2),
+          y: target.y + card.offsetHeight / 2 - (origin.y + car.offsetHeight / 2),
+          scale: card.offsetWidth / car.offsetWidth,
+        };
+      };
 
       // `filter` is a string, so the treatment tweens through a numeric proxy.
       const tone = { ...ON_DARK };
@@ -188,16 +200,8 @@ export function HeroStage({
       };
       applyTone();
 
-      gsap.set(card, { scale: 1, transformOrigin: "50% 50%" });
       gsap.set(posterRef.current, { opacity: 0 });
-      gsap.set(seamRef.current, { opacity: 0 });
-
-      // Card and cut-out scale together once landed, so they stay registered.
-      const zoom = { value: 1 };
-      const applyZoom = () => {
-        gsap.set(card, { scale: zoom.value });
-        gsap.set(car, { scale: landing().scale * zoom.value });
-      };
+      gsap.set(textRef.current, { opacity: 0, y: 12 });
 
       const master = gsap.timeline({
         scrollTrigger: {
@@ -243,39 +247,14 @@ export function HeroStage({
         POSTER_IN_AT,
       );
 
-      // 2 — the photograph takes the screen and stays taken. It used to shrink
-      // back to a card over the last fifth, which put the same picture on
-      // screen twice in a row: once as a card the hero handed back, then again
-      // in the panel below. Now the hero ends inside it and the page scrolls
-      // out of the picture instead of the picture withdrawing from the page.
+      // 2 — the copy arrives, once the car has settled and not before. The
+      // photograph is the subject until then; the sentence is what the hero
+      // leaves you with. It rises a little as it fades so the arrival reads as
+      // movement rather than as a light being switched on.
       master.to(
-        zoom,
-        {
-          value: () => immerseScale(),
-          ease: "power2.in",
-          duration: FILLED_AT - LANDED_AT,
-          onUpdate: applyZoom,
-        },
-        LANDED_AT,
-      );
-      master.to(
-        zoom,
-        {
-          value: () => immerseScale() * SETTLE_DRIFT,
-          ease: "none",
-          duration: 1 - FILLED_AT,
-          onUpdate: applyZoom,
-        },
-        FILLED_AT,
-      );
-      // 3 — the lower edge melts into the ground the next section starts on.
-      // Without it the picture met the panel as a hard light-to-dark line,
-      // which is the one place the handover reads as a cut rather than a
-      // transition. It stays clear while you are inside the picture.
-      master.to(
-        seamRef.current,
-        { opacity: 1, ease: "power2.in", duration: 1 - FILLED_AT },
-        FILLED_AT,
+        textRef.current,
+        { opacity: 1, y: 0, ease: "power2.out", duration: TEXT_IN_FOR },
+        TEXT_IN_AT,
       );
 
       ScrollTrigger.refresh();
@@ -297,7 +276,10 @@ export function HeroStage({
     >
       <h1 className="sr-only">{heading}</h1>
 
-      <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden">
+      <div
+        ref={stageRef}
+        className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden"
+      >
         <div aria-hidden className="absolute inset-0 z-0" style={{ backgroundColor: accentHex }} />
         <div aria-hidden className="absolute inset-0 z-0 bg-black/35" />
         <div
@@ -325,32 +307,58 @@ export function HeroStage({
           {logo}
         </div>
 
-        {/* The photograph the cut-out lands in. */}
-        <div
-          ref={cardRef}
-          className="relative z-20 overflow-hidden rounded-[12px] will-change-transform md:rounded-[16px]"
-          style={{
-            width: `min(96vw, calc(${CARD_VH * 100}svh * ${aspect}))`,
-            height: `min(${CARD_VH * 100}svh, 96vw / ${aspect})`,
-            aspectRatio: aspect,
-          }}
-        >
+        {/*
+         * The composition the hero settles into: the photograph on the left,
+         * the sentence beside it. The card sits here rather than in the middle
+         * of the stage because the cut-out lands wherever the card is — the
+         * landing is measured from its layout box — so placing it in the
+         * finished layout is all it takes to send the car there.
+         *
+         * A column on a phone, where "beside" does not exist. The card may
+         * shrink there: at 390x667 the whole composition wants 772px of an
+         * available 667, and the picture is the only part that can give. It
+         * crops rather than pushing the sentence off the screen.
+         */}
+        <div className="relative z-20 flex h-full w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-10 lg:grid lg:h-auto lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-x-16 lg:py-0">
           <div
-            ref={posterRef}
-            aria-hidden
-            className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
+            ref={cardRef}
+            className="relative min-h-0 w-full shrink overflow-hidden rounded-[12px] will-change-transform md:rounded-[16px] lg:col-start-1"
+            style={{ aspectRatio: aspect }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
-            <img
-              src={posterSrc}
-              srcSet={posterSrcSet}
-              sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
-              alt=""
-              width={1600}
-              height={1151}
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
+            <div
+              ref={posterRef}
+              aria-hidden
+              className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
+              <img
+                src={posterSrc}
+                srcSet={posterSrcSet}
+                sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
+                alt=""
+                width={1600}
+                height={1151}
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div ref={textRef} className="text-box-trim w-full lg:col-start-2">
+            <h2 className="text-metal font-display text-2xl font-semibold text-balance italic md:text-3xl lg:text-right lg:text-4xl xl:text-5xl">
+              {header}
+            </h2>
+            {body.map((paragraph, index) => (
+              <p
+                key={paragraph}
+                className={cn(
+                  "body-copy max-w-[62ch] text-fg-muted",
+                  index === 0 ? "mt-5" : "mt-4",
+                )}
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
 
@@ -380,17 +388,6 @@ export function HeroStage({
         >
           {wordmark}
         </div>
-
-        {/* Closes the seam to the section below; see phase 3 above. */}
-        <div
-          ref={seamRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-40 h-[26vh]"
-          style={{
-            background:
-              "linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--color-brand-teal) 56%, #000) 100%)",
-          }}
-        />
 
         <div
           ref={cueRef}

@@ -60,10 +60,9 @@ export default function Home() {
     <main>
       <StaticBackdrop revealAfter="#hero" />
       <BrandDrawer
-        revealWith="#inhalt"
+        revealWith="#werke"
         links={[
           { label: "Start" },
-          { label: "Ein Unikat verdient ein Unikat", targetId: "inhalt" },
           { label: "Werke", targetId: "werke" },
           { label: "Der Prozess eines Werkes", targetId: "prozess" },
           { label: "Das Ausleben einer Leidenschaft", targetId: "leidenschaft" },
@@ -74,6 +73,8 @@ export default function Home() {
       <HeroStage
         id="hero"
         heading="Vectronia One — Automobilkunst"
+        header={INTRO_HEADER}
+        body={INTRO_BODY}
         accentHex="#11383b"
         aspect={heroArtwork.aspect}
         artworkAlt={heroArtwork.alt}
@@ -109,8 +110,6 @@ export default function Home() {
           />
         }
       />
-
-      <IntroPanel id="inhalt" artwork={heroArtwork} header={INTRO_HEADER} body={INTRO_BODY} />
 
       <KineticGallery id="werke" label="Werke" artworks={galleryArtworks} />
 
