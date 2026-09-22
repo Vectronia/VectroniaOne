@@ -17,6 +17,12 @@ export default function Impressum() {
       <p>
         {LEGAL.name}
         <br />
+        {LEGAL.careOf && (
+          <>
+            {LEGAL.careOf}
+            <br />
+          </>
+        )}
         {LEGAL.street}
         <br />
         {LEGAL.city}

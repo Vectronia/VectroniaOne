@@ -15,6 +15,8 @@ export const TODO = "BITTE_AUSFUELLEN";
 export type LegalDetails = {
   /** Full name, as registered. */
   name: string;
+  /** Care-of line, where the letterbox carries another name. Empty to omit. */
+  careOf: string;
   street: string;
   /** Postcode and town. */
   city: string;
@@ -33,9 +35,10 @@ export type LegalDetails = {
 };
 
 export const LEGAL: LegalDetails = {
-  name: TODO,
-  street: TODO,
-  city: TODO,
+  name: "Sharon Estelle van Gameren",
+  careOf: "c/o Bathrellou",
+  street: "Kölnstraße 107",
+  city: "53111 Bonn",
   email: TODO,
   phone: "",
   vatId: "",
