@@ -1,9 +1,35 @@
 # Die Seite hochladen
 
-Vorausgesetzt ist ein Tarif, der **Node.js-Anwendungen** ausführen kann. Frag
-beim Hoster nach: *„Kann ich auf diesem Tarif eine Node.js-Anwendung
-betreiben?"* Lautet die Antwort nein, sag Bescheid — dann muss das
-Kontaktformular auf PHP umgebaut werden.
+Der Tarif führt Node.js-Anwendungen aus und nennt Next.js ausdrücklich als
+unterstütztes Framework. Es gibt deshalb **zwei Wege**, und beide sind geprüft:
+
+- **A — der Hoster baut selbst** aus dem Quellcode. Weniger Arbeit, empfohlen.
+- **B — du lädst ein fertiges Paket hoch.** Nötig, falls Weg A nicht angeboten
+  wird oder scheitert.
+
+> **Node-Version: 22.x wählen.** Next.js verlangt mindestens 20.9 — die
+> ebenfalls angebotene 18.x funktioniert **nicht**. Geprüft ist 22.
+> Paketmanager: npm.
+
+## Weg A — der Hoster baut
+
+Repository verbinden (oder den Quellcode hochladen) und diese Befehle angeben:
+
+| | |
+|---|---|
+| Installieren | `npm ci` |
+| Bauen | `npm run build` |
+| Starten | `npm start` |
+
+Mehr ist nicht nötig. Geprüft in einem frischen Baum ohne `node_modules`:
+Installation ohne Schwachstellen, Build ohne Warnungen, Start bedient
+Startseite, Impressum, Datenschutz und das Kontaktformular.
+
+Danach direkt weiter bei Schritt 5.
+
+## Weg B — fertiges Paket
+
+Die Schritte 3 und 4 unten.
 
 ## 1. Postfach anlegen
 
@@ -20,7 +46,7 @@ node scripts/test-smtp.mjs --senden
 Das Skript meldet im Klartext, was klemmt. `.env.local` bleibt auf deinem
 Rechner und wird nie mit hochgeladen.
 
-## 3. Paket bauen
+## 3. Paket bauen (nur Weg B)
 
 ```bash
 bash scripts/package.sh
@@ -30,7 +56,7 @@ Ergebnis: `dist/` (etwa 33 MB) und `dist.zip` (etwa 15 MB). Darin steckt alles,
 was der Server braucht — auch die Abhängigkeiten. Auf dem Server muss kein
 `npm install` laufen.
 
-## 4. Hochladen und starten
+## 4. Hochladen und starten (nur Weg B)
 
 `dist.zip` in das Anwendungsverzeichnis entpacken. Der Startbefehl ist:
 
@@ -70,4 +96,7 @@ selbst sagt Besuchern absichtlich nichts über die Ursache.
 
 ## Bei Änderungen
 
-Schritt 3 und 4 wiederholen. Die Umgebungsvariablen bleiben erhalten.
+**Weg A:** pushen, der Hoster baut neu.
+**Weg B:** Schritt 3 und 4 wiederholen.
+
+Die Umgebungsvariablen bleiben in beiden Fällen erhalten.
