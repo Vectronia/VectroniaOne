@@ -42,17 +42,14 @@ const DESCRIPTION =
  *
  * The page is prerendered, so Next resolves `og:image` at build time and has
  * no request to take the host from: without this it writes localhost into the
- * tag and no shared link shows a picture. Set NEXT_PUBLIC_SITE_URL in the
- * deployment to the live domain; Vercel's own variable is used if it is not.
+ * tag and no shared link shows a picture. The live domain is the default, so
+ * a plain build is already correct; NEXT_PUBLIC_SITE_URL overrides it for a
+ * preview or staging deployment.
  */
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : undefined);
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vectronia-one.de";
 
 export const metadata: Metadata = {
-  ...(SITE_URL ? { metadataBase: new URL(SITE_URL) } : {}),
+  metadataBase: new URL(SITE_URL),
   title: TITLE,
   description: DESCRIPTION,
   // Names the artist for the "author" line search engines and readers show.
