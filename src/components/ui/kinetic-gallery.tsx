@@ -190,7 +190,13 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
             style={{ backgroundColor: `rgba(0, 0, 0, ${LIGHTBOX_SCRIM})` }}
             tabIndex={-1}
           />
-          <figure className="relative flex max-h-full min-h-0 flex-col items-center gap-3">
+          {/*
+           * The gap has to clear the caption's ground, not just its type: the
+           * gradient reaches 20px above the words, so at the old 12px it lay
+           * 16px over the foot of the picture. 36px puts a clear 16px between
+           * the two.
+           */}
+          <figure className="relative flex max-h-full min-h-0 flex-col items-center gap-9">
             {/* eslint-disable-next-line @next/next/no-img-element -- same renditions, shown at display size */}
             <img
               src={active.src}
@@ -223,13 +229,16 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
             <figcaption className="text-on-scrim relative isolate shrink-0 text-center">
               <span
                 aria-hidden
-                className="pointer-events-none absolute -inset-x-14 -inset-y-7 -z-10"
+                // Reaches much further below the caption than above it. Above,
+                // anything beyond a little lies over the foot of the picture;
+                // below, a three-line caption needs the room, and at an even
+                // inset the sheet size ended up on the faded edge.
+                className="pointer-events-none absolute -inset-x-14 -top-3 -bottom-10 -z-10"
                 style={{
-                  // Reaches far enough down to hold a three-line caption: with
-                  // the sheet size on its own line the last row of type sat on
-                  // the faded edge of the earlier, shallower gradient.
+                  // The centre rides above the middle of that taller box, so
+                  // the darkest part sits on the type rather than under it.
                   background:
-                    "radial-gradient(62% 78% at 50% 50%, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.7) 48%, rgb(0 0 0 / 0.34) 76%, transparent 100%)",
+                    "radial-gradient(62% 74% at 50% 42%, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.7) 48%, rgb(0 0 0 / 0.34) 76%, transparent 100%)",
                 }}
               />
               <span className="block max-w-[34ch] text-balance font-display text-lg text-rose-200 italic md:text-2xl">
