@@ -132,6 +132,26 @@
 }
 
 /*
+ * The hero's copy, which has to share one unscrollable screen with a heading
+ * and the photograph the cut-out lands in.
+ *
+ * On a short screen the photograph is the only part that can give way, and it
+ * gives way fast: at 390x740 it had fallen to 230px wide. Taking the type down
+ * to the foot of its comfortable range there, and the leading with it, hands
+ * those lines back to the picture. Wide viewports set the text beside the
+ * photograph instead of above it, so nothing is competing and the rule stays
+ * out of their way.
+ */
+@utility hero-copy {
+  @media (width < 64rem) and (height < 50rem) {
+    p {
+      font-size: 1rem;
+      line-height: 1.56;
+    }
+  }
+}
+
+/*
  * Trims the half-leading above the first line and below the last, so a
  * neighbouring element aligns to the letters rather than to the line box.
  * Without it the artwork beside the copy sits about 7px proud at either end.

@@ -10,8 +10,14 @@ export type BrandDrawerLink = {
   targetId?: string;
 };
 
+/**
+ * How far up the screen the section named by `revealWith` must have come
+ * before the mark appears — 0.7 puts it just past a third of the way in.
+ */
+const REVEAL_AT = 0.7;
+
 export type BrandDrawerProps = {
-  /** The tab appears once this element comes into view, and then stays. */
+  /** The tab appears once this element has come up the screen. */
   revealWith: string;
   links: BrandDrawerLink[];
   className?: string;
@@ -31,23 +37,28 @@ export function BrandDrawer({ revealWith, links, className }: BrandDrawerProps) 
   const tabRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Appears with the section it belongs to, and stays for the rest of the page
-  // so the way back is never more than one press away.
+  // Appears with the section it belongs to and stays for the rest of the page,
+  // so the way back is never more than one press away — but steps aside again
+  // if the reader returns to the hero. There it would sit on the hero's own
+  // heading, and the way home is where you already are.
   //
   // The observer watches that section rather than the hero: the hero is several
   // viewports tall, and an observer never fires while you move around inside a
   // single element, so the tab would have stayed hidden.
+  //
+  // The root is shortened from below so the mark waits until the section has
+  // genuinely started, rather than arriving on the hero's last frame. The
+  // decision is read off the section's own top edge, not off isIntersecting:
+  // once it has scrolled off the top the section no longer intersects, and the
+  // mark must stay.
   useEffect(() => {
     const target = document.querySelector(revealWith);
     if (!target) return;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setRevealed(true);
-          io.disconnect();
-        }
+        setRevealed(entry.boundingClientRect.top < window.innerHeight * REVEAL_AT);
       },
-      { threshold: 0 },
+      { threshold: 0, rootMargin: `0px 0px -${Math.round((1 - REVEAL_AT) * 100)}% 0px` },
     );
     io.observe(target);
     return () => io.disconnect();

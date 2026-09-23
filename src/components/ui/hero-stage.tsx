@@ -147,7 +147,8 @@ export function HeroStage({
   const cardRef = useRef<HTMLDivElement>(null);
   const posterRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLHeadingElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -200,8 +201,10 @@ export function HeroStage({
       };
       applyTone();
 
+      const copy = [headRef.current, bodyRef.current];
+
       gsap.set(posterRef.current, { opacity: 0 });
-      gsap.set(textRef.current, { opacity: 0, y: 12 });
+      gsap.set(copy, { opacity: 0, y: 12 });
 
       const master = gsap.timeline({
         scrollTrigger: {
@@ -251,11 +254,7 @@ export function HeroStage({
       // photograph is the subject until then; the sentence is what the hero
       // leaves you with. It rises a little as it fades so the arrival reads as
       // movement rather than as a light being switched on.
-      master.to(
-        textRef.current,
-        { opacity: 1, y: 0, ease: "power2.out", duration: TEXT_IN_FOR },
-        TEXT_IN_AT,
-      );
+      master.to(copy, { opacity: 1, y: 0, ease: "power2.out", duration: TEXT_IN_FOR }, TEXT_IN_AT);
 
       ScrollTrigger.refresh();
     }, sectionRef);
@@ -315,46 +314,80 @@ export function HeroStage({
          * finished layout is all it takes to send the car there.
          *
          * A column on a phone, where "beside" does not exist. The card may
-         * shrink there: at 390x667 the whole composition wants 772px of an
-         * available 667, and the picture is the only part that can give. It
+         * shrink there: at 390x667 the whole composition wants far more than
+         * the 667 it has, and the picture is the only part that can give. It
          * crops rather than pushing the sentence off the screen.
+         *
+         * The rhythm between the three is the 40px the other sections use,
+         * but tied to the viewport height rather than fixed, so a short
+         * screen spends its slack on the photograph instead of on air. At
+         * 844 tall it is exactly 40px; it gives up 8px of that by 667.
          */}
-        <div className="relative z-20 flex h-full w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-10 lg:grid lg:h-auto lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-x-16 lg:py-0">
+        <div className="relative z-20 flex h-full w-full max-w-6xl flex-col items-center justify-center gap-y-[clamp(1.25rem,4.74vh,2.5rem)] px-6 py-[clamp(1.25rem,4.74vh,2.5rem)] lg:grid lg:h-auto lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-x-16 lg:gap-y-5 lg:py-0">
+          {/*
+           * Heading, picture, text — the order every other section reads in,
+           * and on a phone that is the order on the screen. Beside the picture
+           * the heading keeps the same place in the reading order; only the
+           * grid puts it in the second column.
+           */}
+          <h2
+            ref={headRef}
+            className="text-metal font-display w-full text-center text-2xl font-semibold text-balance italic md:text-3xl lg:col-start-2 lg:row-start-1 lg:text-right lg:text-4xl xl:text-5xl"
+          >
+            {header}
+          </h2>
+
+          {/*
+           * The picture gives way on a short screen — but only by getting
+           * smaller, never by getting squarer. The cut-out lands at the
+           * card's width, so its height follows from the card's proportions;
+           * a card squashed out of proportion would be met by a car that
+           * still stands as tall as the photograph is wide, and at 390x667
+           * that put the bonnet across the first two lines of text.
+           *
+           * So the shrinking happens on this outer box, which carries the
+           * proportions and the width; the card inside takes its height from
+           * it and derives its own width, staying in proportion whatever is
+           * left. `min-h-0` is what allows a flex child to fall below its
+           * content height at all.
+           */}
           <div
-            ref={cardRef}
-            className="relative min-h-0 w-full shrink overflow-hidden rounded-[12px] will-change-transform md:rounded-[16px] lg:col-start-1"
+            className="flex min-h-0 w-full shrink justify-center lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-center"
             style={{ aspectRatio: aspect }}
           >
             <div
-              ref={posterRef}
-              aria-hidden
-              className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
+              ref={cardRef}
+              className="relative h-full max-w-full overflow-hidden rounded-[12px] will-change-transform md:rounded-[16px]"
+              style={{ aspectRatio: aspect }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
-              <img
-                src={posterSrc}
-                srcSet={posterSrcSet}
-                sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
-                alt=""
-                width={1600}
-                height={1151}
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
+              <div
+                ref={posterRef}
+                aria-hidden
+                className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
+                <img
+                  src={posterSrc}
+                  srcSet={posterSrcSet}
+                  sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
+                  alt=""
+                  width={1600}
+                  height={1151}
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </div>
           </div>
 
-          <div ref={textRef} className="text-box-trim w-full lg:col-start-2">
-            <h2 className="text-metal font-display text-2xl font-semibold text-balance italic text-center md:text-3xl lg:text-right lg:text-4xl xl:text-5xl">
-              {header}
-            </h2>
+          <div
+            ref={bodyRef}
+            className="hero-copy text-box-trim w-full lg:col-start-2 lg:row-start-2"
+          >
             {body.map((paragraph, index) => (
               <p
                 key={paragraph}
-                className={cn(
-                  "body-copy max-w-[62ch] text-fg-muted",
-                  index === 0 ? "mt-5" : "mt-4",
-                )}
+                className={cn("body-copy max-w-[62ch] text-fg-muted", index > 0 && "mt-4")}
               >
                 {paragraph}
               </p>
