@@ -332,7 +332,9 @@ export function HeroStage({
            */}
           <h2
             ref={headRef}
-            className="text-metal font-display w-full text-center text-2xl font-semibold text-balance italic md:text-3xl lg:col-start-2 lg:row-start-1 lg:text-right lg:text-4xl xl:text-5xl"
+            // The same steps as every other section's heading, so the hero
+            // does not read as a smaller relative of the rest.
+            className="text-metal font-display w-full text-center text-3xl font-semibold text-balance italic md:text-4xl lg:col-start-2 lg:row-start-1 lg:text-right lg:text-5xl"
           >
             {header}
           </h2>
