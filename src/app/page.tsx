@@ -31,6 +31,19 @@ export const metadata: Metadata = {
 };
 
 /**
+ * The two Instagram accounts, in the order they are offered.
+ *
+ * The second is a different body of work, not a second address for the same
+ * one, so it says what it is rather than being listed as an equal alternative:
+ * someone here for a drawing of their own car has no reason to follow it, and
+ * someone who does want it would otherwise never know it exists.
+ */
+const INSTAGRAM = [
+  { handle: "vectronia_one_art", note: "Autokunst, Auftragsarbeiten und Zeichnungen von Treffen." },
+  { handle: "vectronia", note: "Interesse an fantasievolleren Bildern? Die stehen hier." },
+];
+
+/**
  * What the site is, written for a machine.
  *
  * A search engine reads the words on the page well enough; what it cannot
@@ -67,6 +80,7 @@ const STRUCTURED_DATA = {
         addressLocality: LEGAL.city.replace(/^\d+\s*/, ""),
         addressCountry: "DE",
       },
+      sameAs: INSTAGRAM.map(({ handle }) => `https://www.instagram.com/${handle}/`),
       knowsAbout: [
         "Automobilillustration",
         "Unikat-Zeichnungen",
@@ -227,6 +241,32 @@ export default function Home() {
         body={CONTACT_BODY}
       >
         <ContactForm />
+
+        {/*
+         * Under the form rather than beside it: the form is what this section
+         * is for, and a link out sitting level with it would compete for the
+         * same attention.
+         */}
+        <div className="mt-12 max-w-[62ch] border-t border-white/10 pt-8">
+          <h3 className="font-display text-lg text-fg italic">Auf Instagram</h3>
+          <ul className="mt-4 space-y-4">
+            {INSTAGRAM.map(({ handle, note }) => (
+              <li key={handle}>
+                <a
+                  href={`https://www.instagram.com/${handle}/`}
+                  // A link leaving the site opens in its own tab, and `noopener`
+                  // keeps the opened page from reaching back into this one.
+                  target="_blank"
+                  rel="me noopener noreferrer"
+                  className="copy-link font-display text-lg italic"
+                >
+                  @{handle}
+                </a>
+                <p className="mt-1 text-sm leading-relaxed text-fg-muted/80">{note}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       </IntroPanel>
 
       <SiteFooter />
