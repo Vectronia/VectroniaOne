@@ -241,7 +241,14 @@ export function KineticGallery({ label, artworks, id, className }: KineticGaller
                     "radial-gradient(62% 74% at 50% 42%, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.7) 48%, rgb(0 0 0 / 0.34) 76%, transparent 100%)",
                 }}
               />
-              <span className="block max-w-[34ch] text-balance font-display text-lg text-rose-200 italic md:text-2xl">
+              {/*
+               * `mx-auto` is not decoration: the measure caps this line at
+               * 34ch, and a capped block with no auto margin sits at the left
+               * of the caption. Its own text was centred inside it, so the
+               * title alone hung 43px left of the technique and the sheet size
+               * on a 390px screen — the wider the caption, the further out.
+               */}
+              <span className="mx-auto block max-w-[34ch] text-balance font-display text-lg text-rose-200 italic md:text-2xl">
                 {active.title}
               </span>
               <span className="mt-0.5 block text-xs tracking-[0.18em] text-fg-muted uppercase">
