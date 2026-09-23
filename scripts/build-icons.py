@@ -42,17 +42,34 @@ NAVY = (25, 28, 40, 255)
 
 # How much weight to add around the mark, as a fraction of its longest side.
 #
-# The arc tapers to a hairline at its right end. Fitted whole into a 16px tile
-# that end reads as a stray scratch rather than as part of the mark. Padding
-# does not help — it only makes everything smaller, and a shorter hairline is
-# still a hairline. Weight does: an outline in the fill's own colour thickens
-# the thin passages until they carry as strokes.
+# The arc is not a taper. Measured across the mark, from 65% of the width
+# onward it holds a steady 76-86px of a 1440px drawing — which is 0.85px once
+# a tab scales it to 16, and under a pixel is what makes it read as a stray
+# scratch instead of as part of the mark.
 #
-# 0.018 was chosen by measuring rather than by eye. It lifts coverage of a 16px
-# tile from 29% to 38% while the counters stay open: the ring and the hollow of
-# the arc still register as holes, which is what stops the mark collapsing into
-# a blob.
-ICON_STROKE = 0.018
+# 0.018 was too small to do anything about that: it added 0.2px at tab size.
+# 0.030 lifts the arc to about 1.2px at 16 and 2.4px at 32 — the size a tab
+# actually renders on a high-resolution screen — so it carries as a stroke.
+#
+# The ceiling is the counters. Rendered at 32px, weight past 0.045 closes the
+# gaps inside the mark and from 0.055 the ring merges with the arc, leaving a
+# black triangle. Six weights were rendered at 16 and 32 under both colour
+# schemes before choosing.
+ICON_STROKE = 0.030
+
+# Margin held around the mark inside the tab icon's own box, as a fraction of
+# its longest side.
+#
+# Without it the drawing ends exactly on the edge of the icon, so the arc runs
+# off the side and the mark reads as cut rather than as placed. This is the
+# invisible box around it.
+#
+# Measured on the rendered tile as how much ink lands in the outermost row of
+# pixels, where 0.95 is a hard edge: no margin leaves 0.95, 0.06 still leaves
+# 0.42, and 0.09 brings it to 0.11 — the last of it the antialiased edge
+# rather than the drawing. Half the outline above has to fit inside this too,
+# and does, with room to spare.
+ICON_PAD = 0.09
 
 
 def trimmed_mark() -> Image.Image:
@@ -121,8 +138,10 @@ def main() -> None:
 
     d, w, h = silhouette_path(mark)
     stroke = round(max(w, h) * ICON_STROKE, 1)
+    pad = round(max(w, h) * ICON_PAD)
     (APP / "icon.svg").write_text(
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">'
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" "
+        f'viewBox="{-pad} {-pad} {w + 2 * pad} {h + 2 * pad}">'
         "<style>"
         "path{fill:#111114;stroke:#111114}"
         "@media(prefers-color-scheme:dark){path{fill:#f3ece5;stroke:#f3ece5}}"
