@@ -20,8 +20,8 @@ export type IntroPanelProps = {
    */
   artwork: Artwork | Artwork[];
   header: string;
-  /** One entry per paragraph. */
-  body?: string[];
+  /** One entry per paragraph. A paragraph may carry a link or other markup. */
+  body?: React.ReactNode[];
   /**
    * Mirrors the panel: copy on the left, picture on the right. The ranged edge
    * of the type follows, so it still meets the picture rather than turning its
@@ -257,7 +257,10 @@ export function IntroPanel({
         >
           {body?.map((paragraph, index) => (
             <p
-              key={paragraph}
+              // The paragraphs are fixed content in source order, so the index
+              // is a stable identity; a paragraph carrying markup has no
+              // string to key on.
+              key={index}
               className={cn(
                 "body-copy max-w-[62ch] text-fg-muted",
                 index > 0 && "mt-6",

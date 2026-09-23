@@ -132,6 +132,36 @@
 }
 
 /*
+ * A link set inside running body copy.
+ *
+ * The footer's links show their underline only on hover, which is fine for a
+ * row of links where everything is one. Inside a paragraph nothing marks a
+ * link but its own appearance, so this one carries its rule at rest — thin,
+ * held off the baseline, and skipping the descenders — and answers the
+ * pointer with the brand's amber rather than with a change of weight, which
+ * would reflow the line.
+ */
+@utility copy-link {
+  color: var(--color-fg);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--color-brand-amber) 55%, transparent);
+  text-underline-offset: 0.22em;
+  text-decoration-skip-ink: auto;
+  transition: color 300ms var(--ease-out-expo), text-decoration-color 300ms var(--ease-out-expo);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-brand-amber);
+    text-decoration-color: var(--color-brand-amber);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/*
  * The hero's copy, which has to share one unscrollable screen with a heading
  * and the photograph the cut-out lands in.
  *

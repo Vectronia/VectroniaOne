@@ -25,7 +25,14 @@ const PROCESS_HEADER = "Der Prozess eines Werkes";
 const PROCESS_BODY = [
   "Ein Werk kann auf verschiedenen Wegen entstehen. Nach einem Foto — oder vor Ort, wo ich Details genauer wahrnehme und in Ansicht und Bildaufbau freier bin. Für Autotreffen lasse ich mich buchen und skizziere direkt am Fahrzeug. Ebenso kann eine Vorlage aus meinem Skizzenbuch groß ausgeführt werden, auf Wunsch in einer eigenen Farbgebung.",
   "Gearbeitet wird mit Tinte, Grafitstift, Kohle oder Ölpastellkreide — auf Aquarell-, Stein- und Zeichenpapier oder auf Leinwand.",
-  "Aus meiner Sammlung gebe ich außerdem Einzelstücke ab. Kontaktiere mich auch gerne dafür mit dem Formular, das du im Kontakt finden kannst.",
+  <>
+    Aus meiner Sammlung gebe ich außerdem Einzelstücke ab. Kontaktiere mich auch gerne dafür
+    mit dem Formular, das du im{" "}
+    <a href="#kontakt" className="copy-link">
+      Kontakt
+    </a>{" "}
+    finden kannst.
+  </>,
 ];
 
 const PASSION_HEADER = "Das Ausleben einer Leidenschaft";
