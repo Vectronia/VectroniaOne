@@ -3,6 +3,7 @@ import { Cormorant_Garamond } from "next/font/google";
 import localFont from "next/font/local";
 
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -37,17 +38,6 @@ const DESCRIPTION =
  * everything after the third would have been cut anyway, and Google rewrites
  * titles it reads as a keyword list.
  */
-/**
- * The absolute address the social image is resolved against.
- *
- * The page is prerendered, so Next resolves `og:image` at build time and has
- * no request to take the host from: without this it writes localhost into the
- * tag and no shared link shows a picture. The live domain is the default, so
- * a plain build is already correct; NEXT_PUBLIC_SITE_URL overrides it for a
- * preview or staging deployment.
- */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vectronia-one.de";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: TITLE,

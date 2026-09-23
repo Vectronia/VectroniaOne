@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { BrandDrawer } from "@/components/ui/brand-drawer";
 import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
@@ -12,6 +14,68 @@ import {
   passionPhotos,
   processPhoto,
 } from "@/data/artworks";
+import { LEGAL } from "@/data/legal";
+import { SITE_URL } from "@/lib/site";
+
+/**
+ * The address this page is to be indexed under.
+ *
+ * Hostinger keeps the site reachable under its own preview host as well as
+ * under the domain, and two addresses serving the same page can be counted as
+ * two pages, splitting whatever either has earned. This names the real one.
+ * It sits here rather than in the layout because metadata is inherited: set on
+ * the layout, Impressum and Datenschutz would each claim to be the home page.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+/**
+ * What the site is, written for a machine.
+ *
+ * A search engine reads the words on the page well enough; what it cannot
+ * infer is that "Vectronia One" and the person drawing are the same thing,
+ * which is exactly what a search for either name needs to know.
+ *
+ * The postal address is deliberately only the town. The full one is on the
+ * Impressum because the law asks for it there; repeating it in machine-
+ * readable form on every page hands it to address harvesters and buys nothing
+ * a search for the name does not already get from the locality.
+ */
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: "Vectronia One",
+      inLanguage: "de-DE",
+      publisher: { "@id": `${SITE_URL}/#person` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: LEGAL.name,
+      alternateName: "Vectronia One",
+      jobTitle: "Illustrationsdesignerin",
+      url: `${SITE_URL}/`,
+      email: `mailto:${LEGAL.email}`,
+      image: `${SITE_URL}/og-vectronia-one.jpg`,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: LEGAL.city.replace(/^\d+\s*/, ""),
+        addressCountry: "DE",
+      },
+      knowsAbout: [
+        "Automobilillustration",
+        "Unikat-Zeichnungen",
+        "Live-Zeichnen auf Autotreffen",
+        "Tuschezeichnung",
+      ],
+    },
+  ],
+};
 
 const INTRO_HEADER = "Ein Unikat verdient ein Unikat";
 
@@ -65,6 +129,14 @@ const CUTOUT_SRCSET = [960, 1440, 1920, 2560]
 export default function Home() {
   return (
     <main>
+      {/*
+       * Read by crawlers, invisible to readers. Next renders this as written;
+       * the content is ours, so there is nothing here to escape.
+       */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+      />
       <StaticBackdrop revealAfter="#hero" />
       <BrandDrawer
         revealWith="#werke"
