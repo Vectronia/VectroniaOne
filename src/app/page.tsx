@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { BrandDrawer } from "@/components/ui/brand-drawer";
 import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
-import { KineticGallery } from "@/components/ui/kinetic-gallery";
+import { ArtworkGallery } from "@/components/ui/artwork-gallery";
 import { PriceTable } from "@/components/ui/price-table";
 import { SiteFooter } from "@/components/ui/site-footer";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
@@ -234,7 +234,7 @@ export default function Home() {
         }
       />
 
-      <KineticGallery id="werke" label="Werke" artworks={galleryArtworks} />
+      <ArtworkGallery id="werke" label="Werke" artworks={galleryArtworks} />
 
       <PriceTable
         id="preise"

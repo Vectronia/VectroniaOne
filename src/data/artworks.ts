@@ -112,9 +112,9 @@ const COPY: Record<string, ArtworkCopy> = {
     alt: "Skizzenbuch-Doppelseite als Inhaltsverzeichnis: eigene Fahrzeugentwürfe rund um den diagonalen Schriftzug „CONTENT“ angeordnet, dazu die Skizze eines Motorrads mit der Aufschrift „CBF 500“.",
   },
   "buch4-5-2": {
-    title: "F-14 Tomcat mit einem Pantera",
+    title: "F-18 Hornet mit einem Pantera",
     meta: "Polychromos-Stift auf gebundenem Skizzenpapier",
-    alt: "Skizzenbuch-Doppelseite mit einer detaillierten Studie eines Kampfflugzeugs vom Typ F-14 Tomcat, darüber ein keilförmiger DeTomaso Pantera.",
+    alt: "Skizzenbuch-Doppelseite mit einer detaillierten Studie eines Kampfflugzeugs vom Typ F-18 Hornet, darüber ein keilförmiger DeTomaso Pantera.",
   },
   skizze: {
     title: "Lamborghini Countach",
