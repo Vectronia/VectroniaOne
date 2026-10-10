@@ -21,6 +21,10 @@ Repository verbinden (oder den Quellcode hochladen) und diese Befehle angeben:
 | Bauen | `npm run build` |
 | Starten | `npm start` |
 
+> **`npm run build` baut mit webpack, nicht mit Turbopack** — Absicht, siehe
+> unten. Auf dem eigenen Rechner ist `npm run build:turbopack` schneller, aber
+> dann ist das Gebaute nicht das, was der Hoster baut.
+
 Mehr ist nicht nötig. Geprüft in einem frischen Baum ohne `node_modules`:
 Installation ohne Schwachstellen, Build ohne Warnungen, Start bedient
 Startseite, Impressum, Datenschutz und das Kontaktformular.
@@ -100,3 +104,27 @@ selbst sagt Besuchern absichtlich nichts über die Ursache.
 **Weg B:** Schritt 3 und 4 wiederholen.
 
 Die Umgebungsvariablen bleiben in beiden Fällen erhalten.
+
+## Warum der Build mit webpack läuft
+
+Next 16 baut standardmäßig mit Turbopack, und Turbopack startet für die
+CSS-Verarbeitung einen eigenen Node-Prozess. Dieser Kindprozess stirbt in
+Hostingers Bauumgebung sofort:
+
+```
+- Execution of evaluate_webpack_loader failed
+- creating new process
+- node process exited before we could connect to it with exit status: 0
+TurbopackInternalError: Failed to write app endpoint /page
+ERROR: Failed to build the application
+```
+
+Vier Bereitstellungen scheiterten daran hintereinander, während derselbe Stand
+aus einem frischen Klon hier mit Node 20 und 22 fehlerfrei durchlief — es ist
+also die Umgebung, nicht der Quelltext.
+
+`--webpack` verarbeitet das CSS im selben Prozess und braucht die Abspaltung
+nicht. Geprüft wurde nicht nur, dass der Build durchläuft, sondern auch, dass
+er dasselbe ergibt: dasselbe Stylesheet mit allen eigenen Utilities, alle
+sechs Abschnitte, alle 18 Werke der Galerie vor und zurück, kein waagerechtes
+Scrollen, keine Konsolenfehler.
