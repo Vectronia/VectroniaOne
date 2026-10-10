@@ -197,11 +197,11 @@ function build(slug: string): Artwork {
 export const heroArtwork = build("buch4-5");
 
 /**
- * The photograph that closes the gallery and carries the process panel.
+ * The photograph that carries the process panel.
  *
- * Not part of the generated manifest: it is a photograph rather than one of
- * the scanned drawings, and it is pinned last rather than taking a place in
- * the reading order above.
+ * Not part of the generated manifest, and no longer part of the gallery: it is
+ * a photograph of someone drawing, not one of the drawings, and among seventeen
+ * sheets it was the one thing that answered a different question.
  */
 export const processPhoto: Artwork = {
   slug: "artstalking",
@@ -267,4 +267,4 @@ export const contactPhoto: Artwork = {
 };
 
 /** Everything else, in reading order, with the photograph pinned to the end. */
-export const galleryArtworks = [...ORDER.map(build), processPhoto];
+export const galleryArtworks = ORDER.map(build);
