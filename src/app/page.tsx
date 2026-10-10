@@ -136,7 +136,7 @@ const PRICE_EXTRAS = [
 ];
 
 const PRICE_INCLUDED = [
-  "In jedem Preis enthalten: drei Vorskizzen, an denen wir Bildaufbau und Farbgebung gemeinsam festlegen, bevor ich das Blatt anlege.",
+  "In jedem Preis enthalten: drei Vorskizzen, an denen wir Bildaufbau und Farbgebung gemeinsam festlegen.",
   "Gearbeitet wird auf einem Malgrund, der zum Medium passt \u2014 das ist im Preis schon drin.",
   "Auf Wunsch Steinpapier oder Leinwand, gegen den Aufpreis der reinen Beschaffungskosten.",
 ];
