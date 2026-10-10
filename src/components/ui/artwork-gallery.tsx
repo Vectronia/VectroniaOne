@@ -227,7 +227,7 @@ export function ArtworkGallery({ label, artworks, id, className }: ArtworkGaller
          */}
         <ul
           ref={stripRef}
-          className="relative mt-10 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-3 md:gap-3"
+          className="strip-scroll relative mt-10 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-4 md:gap-3"
         >
           {artworks.map((art, i) => (
             <li
