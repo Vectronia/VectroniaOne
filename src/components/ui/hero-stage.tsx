@@ -12,10 +12,22 @@ gsap.registerPlugin(ScrollTrigger);
 const TRACK_VH = 2.4;
 /** Progress by which logo and wordmark have left the stage. */
 const MARKS_OUT_AT = 0.16;
-/** Progress at which the photograph starts to appear — after the marks. */
-const POSTER_IN_AT = 0.17;
-/** Progress at which the car has finished landing in the photograph. */
-const LANDED_AT = 0.32;
+/**
+ * Progress by which the cut-out has left the stage to the left.
+ *
+ * A little longer than the marks: the car is the thing being watched, and it
+ * leaves last of the three rather than racing them off.
+ */
+const CAR_OUT_AT = 0.22;
+/**
+ * When the photograph appears, and by when it is fully there.
+ *
+ * It waits for an empty stage. Started earlier it rose while the cut-out was
+ * still crossing the frame on its way out, and the two read as one muddled
+ * movement rather than as a stage clearing and a photograph taking its place.
+ */
+const POSTER_IN_AT = CAR_OUT_AT;
+const POSTER_IN_UNTIL = 0.36;
 /** When the copy begins to arrive, and how long it takes. */
 const TEXT_IN_AT = 0.36;
 const TEXT_IN_FOR = 0.24;
@@ -26,10 +38,9 @@ const TEXT_IN_FOR = 0.24;
  * Taken from the supplied heroStart.psd, whose brightness/contrast layer sits
  * at -70/0 over the car. Fitting that against the flattened file gives
  * brightness(0.685) to within 3.2/255, and no contrast or saturation change.
- * Animated to neutral as the car settles into the photograph.
+ * It never leaves that ground now, so the treatment is set once and left.
  */
 const ON_DARK = { brightness: 0.685, contrast: 1, saturate: 1 };
-const IN_PHOTO = { brightness: 1, contrast: 1, saturate: 1 };
 
 /*
  * Rest geometry is measured off heroStart.psd rather than eyeballed. Its layer
@@ -81,10 +92,12 @@ export type HeroStageProps = {
   /** The cut-out artwork that travels from the dark ground into the photo. */
   cutoutSrc: string;
   cutoutSrcSet?: string;
-  /** The framed photograph the cut-out lands in. */
+  /** The framed photograph the hero settles on, beside the sentence. */
   posterSrc: string;
   posterSrcSet?: string;
-  /** Describes the artwork — this is the section's content, not decoration. */
+  /** Describes that photograph: it is the section's subject, not decoration. */
+  posterAlt: string;
+  /** Describes the cut-out, which is artwork in its own right. */
   artworkAlt: string;
   /** Accessible heading; the visible brand marks are artwork. */
   heading: string;
@@ -128,6 +141,7 @@ export function HeroStage({
   cutoutSrcSet,
   posterSrc,
   posterSrcSet,
+  posterAlt,
   artworkAlt,
   heading,
   header,
@@ -142,9 +156,7 @@ export function HeroStage({
   const sectionRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const carRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const posterRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLHeadingElement>(null);
@@ -154,52 +166,21 @@ export function HeroStage({
   useEffect(() => {
     if (reduced) return;
     const section = sectionRef.current;
-    const stage = stageRef.current;
     const car = carRef.current;
-    const card = cardRef.current;
-    if (!section || !stage || !car || !card) return;
+    if (!section || !car) return;
 
     const ctx = gsap.context(() => {
-      // Landing is measured from the two untransformed layout boxes, so the
-      // cut-out finishes exactly over the photograph at any viewport. `offset*`
-      // rather than getBoundingClientRect, because the latter already includes
-      // whatever transform the tween has applied.
+      // How far the cut-out has to travel to be gone.
       //
-      // The two boxes no longer share an offset parent: the car is placed
-      // against the stage, while the card sits inside the composition wrapper
-      // that lays the photograph out beside the sentence. So each is summed up
-      // its own offsetParent chain to the stage, which both have in common.
-      // Reading offsetLeft/offsetTop alone put the car 143x251px off the
-      // photograph at 1440 wide while landing correctly on a phone, where the
-      // wrapper is not positioned differently from the stage.
-      const offsetInStage = (el: HTMLElement) => {
-        let x = 0;
-        let y = 0;
-        let node: HTMLElement | null = el;
-        while (node && node !== stage) {
-          x += node.offsetLeft;
-          y += node.offsetTop;
-          node = node.offsetParent as HTMLElement | null;
-        }
-        return { x, y };
-      };
+      // Measured rather than given as a percentage of its own width: the car
+      // sits at a different place on a phone than on a desktop, so the same
+      // percentage leaves it half on screen at one size and far past the edge
+      // at another. `offsetLeft` is read against the stage, which the car is
+      // positioned against and which spans the viewport, and the extra width
+      // covers the shadow the drawing carries with it.
+      const exit = () => -(car.offsetLeft + car.offsetWidth * 1.08);
 
-      const landing = () => {
-        const target = offsetInStage(card);
-        const origin = offsetInStage(car);
-        return {
-          x: target.x + card.offsetWidth / 2 - (origin.x + car.offsetWidth / 2),
-          y: target.y + card.offsetHeight / 2 - (origin.y + car.offsetHeight / 2),
-          scale: card.offsetWidth / car.offsetWidth,
-        };
-      };
-
-      // `filter` is a string, so the treatment tweens through a numeric proxy.
-      const tone = { ...ON_DARK };
-      const applyTone = () => {
-        car.style.filter = `brightness(${tone.brightness}) contrast(${tone.contrast}) saturate(${tone.saturate})`;
-      };
-      applyTone();
+      car.style.filter = `brightness(${ON_DARK.brightness}) contrast(${ON_DARK.contrast}) saturate(${ON_DARK.saturate})`;
 
       const copy = [headRef.current, bodyRef.current];
 
@@ -216,37 +197,21 @@ export function HeroStage({
         },
       });
 
-      // 1 — the marks clear the stage and the car settles into the photograph.
+      // 1 — the stage clears. Mark and cut-out go left, wordmark right.
       //
-      // They finish well before the car lands, because the photograph may not
-      // show while they are still on screen: it used to reach 27% opacity with
-      // the wordmark barely moved, so a grey rectangle rose straight through
-      // the lettering. `power2.in` starts slow, so most of the travel happens
-      // in the last part of that window — the fade below waits for it.
+      // The marks finish before the photograph is far along, because it may
+      // not show while they are still on screen: it used to reach 27% opacity
+      // with the wordmark barely moved, so a grey rectangle rose straight
+      // through the lettering. `power2.in` starts slow, so most of the travel
+      // happens in the last part of that window — the fade below waits for it.
       master.to(logoRef.current, { xPercent: -140, ease: "power2.in", duration: MARKS_OUT_AT }, 0);
       master.to(wordRef.current, { xPercent: 140, ease: "power2.in", duration: MARKS_OUT_AT }, 0);
       master.to(cueRef.current, { opacity: 0, ease: "power1.in", duration: 0.06 }, 0);
-      master.to(
-        car,
-        {
-          x: () => landing().x,
-          y: () => landing().y,
-          scale: () => landing().scale,
-          ease: "power2.inOut",
-          duration: LANDED_AT,
-        },
-        0,
-      );
-      master.to(
-        tone,
-        { ...IN_PHOTO, ease: "power1.inOut", duration: LANDED_AT, onUpdate: applyTone },
-        0,
-      );
-      // The photograph only appears once the marks are off the stage, and is
-      // fully there by the time the cut-out settles onto it.
+      master.to(car, { x: exit, ease: "power2.in", duration: CAR_OUT_AT }, 0);
+      // The photograph appears on an empty stage, once the cut-out has left.
       master.to(
         posterRef.current,
-        { opacity: 1, ease: "power1.inOut", duration: LANDED_AT - POSTER_IN_AT },
+        { opacity: 1, ease: "power1.inOut", duration: POSTER_IN_UNTIL - POSTER_IN_AT },
         POSTER_IN_AT,
       );
 
@@ -275,10 +240,7 @@ export function HeroStage({
     >
       <h1 className="sr-only">{heading}</h1>
 
-      <div
-        ref={stageRef}
-        className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden"
-      >
+      <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden">
         <div aria-hidden className="absolute inset-0 z-0" style={{ backgroundColor: accentHex }} />
         <div aria-hidden className="absolute inset-0 z-0 bg-black/35" />
         <div
@@ -308,10 +270,7 @@ export function HeroStage({
 
         {/*
          * The composition the hero settles into: the photograph on the left,
-         * the sentence beside it. The card sits here rather than in the middle
-         * of the stage because the cut-out lands wherever the card is — the
-         * landing is measured from its layout box — so placing it in the
-         * finished layout is all it takes to send the car there.
+         * the sentence beside it.
          *
          * A column on a phone, where "beside" does not exist. The card may
          * shrink there: at 390x667 the whole composition wants far more than
@@ -341,11 +300,11 @@ export function HeroStage({
 
           {/*
            * The picture gives way on a short screen — but only by getting
-           * smaller, never by getting squarer. The cut-out lands at the
-           * card's width, so its height follows from the card's proportions;
-           * a card squashed out of proportion would be met by a car that
-           * still stands as tall as the photograph is wide, and at 390x667
-           * that put the bonnet across the first two lines of text.
+           * smaller, never by getting squarer. It is a photograph of a person,
+           * and a frame squashed out of proportion crops her rather than
+           * resizing her: at 390x667 the composition wants far more height
+           * than it has, and a frame left free to flatten took the picture
+           * down to a letterbox.
            *
            * So the shrinking happens on this outer box, which carries the
            * proportions and the width; the card inside takes its height from
@@ -358,13 +317,11 @@ export function HeroStage({
             style={{ aspectRatio: aspect }}
           >
             <div
-              ref={cardRef}
-              className="relative h-full max-w-full overflow-hidden rounded-[12px] will-change-transform md:rounded-[16px]"
+              className="relative h-full max-w-full overflow-hidden rounded-[12px] md:rounded-[16px]"
               style={{ aspectRatio: aspect }}
             >
               <div
                 ref={posterRef}
-                aria-hidden
                 className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- fixed art direction */}
@@ -372,9 +329,9 @@ export function HeroStage({
                   src={posterSrc}
                   srcSet={posterSrcSet}
                   sizes="(max-width: 768px) 96vw, min(96vw, 92svh)"
-                  alt=""
-                  width={1600}
-                  height={1151}
+                  alt={posterAlt}
+                  width={1748}
+                  height={1166}
                   decoding="async"
                   className="h-full w-full object-cover"
                 />

@@ -12,6 +12,24 @@ gsap.registerPlugin(ScrollTrigger);
 /** How far the artwork travels left as the panel enters, in percent of its width. */
 const ARTWORK_TRAVEL = 14;
 
+/**
+ * The squarest a photograph beside the copy may be cropped.
+ *
+ * The picture is meant to span the text, first line to last, and it does that
+ * by filling the column and cropping. Beside a long text that column is far
+ * taller than any photograph's own proportions, and filling it crops a
+ * landscape picture into a portrait one: the Opel came out at 0.63 against the
+ * file's 1.50 — 58% of the frame gone, the car cut in half and the plate with
+ * it. The process photograph was already at 0.87 by 1024px wide.
+ *
+ * 1.15 is where the process photograph sits at 1440, which reads as a crop
+ * rather than as a different picture, so it is the measured edge of what the
+ * rule can take. Past that the picture keeps its shape and the column simply
+ * runs on under it: the rule gives up its second half, the picture still
+ * starts on the first line of text.
+ */
+const SQUAREST = 1.15;
+
 export type IntroPanelProps = {
   /**
    * The picture beside the copy. Pass several and they stack in the same
@@ -71,14 +89,6 @@ export function IntroPanel({
   className,
 }: IntroPanelProps) {
   const pictures = Array.isArray(artwork) ? artwork : [artwork];
-  /*
-   * A lone picture stretches to fill the column, which is what puts it flush
-   * with the first and last line of the copy. That only holds while the column
-   * beside it is copy: with a form under the text the column runs far taller
-   * than any picture's proportions, and the 16:9 contact sheet came out
-   * squeezed to 0.81 — 46% of the frame left, two of its three cars gone.
-   */
-  const fills = pictures.length === 1 && !children;
   const sectionRef = useRef<HTMLElement>(null);
   const figureRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -194,9 +204,10 @@ export function IntroPanel({
           <div
             className={cn(
               "flex flex-col gap-6 lg:absolute lg:inset-0",
-              // With several pictures the slack goes between them; a single one
-              // has nowhere to put it and stretches to fill instead.
-              !fills && "lg:justify-between",
+              // With several pictures the slack goes between them, so the first
+              // still starts on the first line and the last ends on the last.
+              // A single one has nowhere to put it and stays at the top.
+              pictures.length > 1 && "lg:justify-between",
             )}
           >
             {pictures.map((picture) => (
@@ -211,19 +222,19 @@ export function IntroPanel({
                 height={picture.height}
                 loading="lazy"
                 decoding="async"
-                // `min-h-0` lets a flex child shrink below its intrinsic
-                // height, so a short text crops the picture rather than
-                // overflowing the column.
+                // Beside the copy the picture takes the column's width and as
+                // much of its height as it is allowed: `aspect-[1.15]` sets
+                // the squarest crop (see SQUAREST), `max-h-full` stops it
+                // where the column ends, and whichever comes first wins. So a
+                // short text crops the picture and a long one leaves it alone
+                // rather than wringing it out.
                 //
-                // Only a lone picture stretches to fill. Several keep their own
-                // proportions and sit at the ends of the column, which meets
-                // the rule the same way — first picture on the first line, last
-                // on the last — without the crop: stretching two 3:2 photos to
-                // fill beside a long text squeezed them to nearly square, far
-                // enough to cut a face out of the frame.
+                // `min-h-0` lets a flex child fall below its intrinsic height
+                // at all. Below lg the picture is above the text, not beside
+                // it, and simply keeps its own proportions.
                 className={cn(
                   "w-full lg:min-h-0 lg:w-full",
-                  fills && "lg:flex-1",
+                  !bare && "lg:aspect-[var(--squarest)] lg:h-auto lg:max-h-full",
                   bare
                     ? // A drop shadow follows the silhouette; a box shadow
                       // would draw the rectangle that is not there.
@@ -241,7 +252,7 @@ export function IntroPanel({
                 style={
                   bare
                     ? { width: "min(126%, 100% + max(0px, (100vw - 72rem) / 2 - 1rem))" }
-                    : undefined
+                    : ({ "--squarest": SQUAREST } as React.CSSProperties)
                 }
               />
             ))}

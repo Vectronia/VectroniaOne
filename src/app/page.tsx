@@ -11,7 +11,8 @@ import {
   contactPhoto,
   galleryArtworks,
   heroArtwork,
-  passionPhotos,
+  passionPhoto,
+  portraitPhoto,
   processPhoto,
 } from "@/data/artworks";
 import { LEGAL } from "@/data/legal";
@@ -169,12 +170,13 @@ export default function Home() {
         header={INTRO_HEADER}
         body={INTRO_BODY}
         accentHex="#11383b"
-        aspect={heroArtwork.aspect}
+        aspect={portraitPhoto.aspect}
         artworkAlt={heroArtwork.alt}
         cutoutSrc={CUTOUT_SRC}
         cutoutSrcSet={CUTOUT_SRCSET}
-        posterSrc={heroArtwork.src}
-        posterSrcSet={heroArtwork.srcSet}
+        posterSrc={portraitPhoto.src}
+        posterSrcSet={portraitPhoto.srcSet}
+        posterAlt={portraitPhoto.alt}
         logo={
           // eslint-disable-next-line @next/next/no-img-element -- pre-rendered renditions of the mark, cut out in Photoshop
           <img
@@ -218,14 +220,9 @@ export default function Home() {
         body={PROCESS_BODY}
       />
 
-      {/*
-       * Two photographs rather than one: Japan first, because that is the trip
-       * the closing sentence points back to, and the Opel last, where the text
-       * leaves it — in the garage.
-       */}
       <IntroPanel
         id="leidenschaft"
-        artwork={passionPhotos}
+        artwork={passionPhoto}
         header={PASSION_HEADER}
         body={PASSION_BODY}
       />

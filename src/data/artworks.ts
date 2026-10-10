@@ -215,37 +215,43 @@ export const processPhoto: Artwork = {
   srcSet: "/artwork/artstalking-960.webp 960w, /artwork/artstalking-1440.webp 1440w",
 };
 
-/**
- * The two photographs that carry "Das Ausleben einer Leidenschaft".
- *
- * Like the process photograph these stay out of the generated manifest: they
- * are pictures of a person and a car, not plates, and they never appear in the
- * gallery. Both sources are around 1.5k wide, so they ship at 960 and 1440.
+/*
+ * The two photographs of a person and a car. Like the process photograph they
+ * stay out of the generated manifest — they are not plates and never appear in
+ * the gallery. Both sources are around 1.5k wide, so they ship at 960 and 1440.
  */
-export const passionPhotos: Artwork[] = [
-  {
-    slug: "japan-datsun",
-    title: "Fairlady",
-    meta: "Fotografie, Hakone",
-    alt: "Die Zeichnerin lehnt l\u00e4chelnd auf der Motorhaube eines blauen Datsun 240Z; im Hintergrund eine bewaldete H\u00fcgelkette in Hakone.",
-    width: 1748,
-    height: 1166,
-    aspect: 1.4991,
-    src: "/photo/japan-datsun-1440.webp",
-    srcSet: "/photo/japan-datsun-960.webp 960w, /photo/japan-datsun-1440.webp 1440w",
-  },
-  {
-    slug: "konfeti",
-    title: "Konfeti",
-    meta: "Fotografie",
-    alt: "Ein schwarzer Opel Vectra B Caravan mit goldenen Felgen und dem Kennzeichen \u201eKONFETI\u201c steht in Dreiviertelansicht von vorn auf einem Sandweg zwischen D\u00fcnengras.",
-    width: 1536,
-    height: 1024,
-    aspect: 1.5,
-    src: "/photo/konfeti-1440.webp",
-    srcSet: "/photo/konfeti-960.webp 960w, /photo/konfeti-1440.webp 1440w",
-  },
-];
+
+/**
+ * The photograph the hero settles on, beside "Ein Unikat verdient ein Unikat".
+ *
+ * It used to open "Das Ausleben einer Leidenschaft" and has moved up: the
+ * sentence beside it is written in the first person, and a photograph of the
+ * person saying it carries that better than a plate of one of her drawings.
+ */
+export const portraitPhoto: Artwork = {
+  slug: "japan-datsun",
+  title: "Fairlady",
+  meta: "Fotografie, Hakone",
+  alt: "Die Zeichnerin lehnt l\u00e4chelnd auf der Motorhaube eines blauen Datsun 240Z; im Hintergrund eine bewaldete H\u00fcgelkette in Hakone.",
+  width: 1748,
+  height: 1166,
+  aspect: 1.4991,
+  src: "/photo/japan-datsun-1440.webp",
+  srcSet: "/photo/japan-datsun-960.webp 960w, /photo/japan-datsun-1440.webp 1440w",
+};
+
+/** The photograph that carries "Das Ausleben einer Leidenschaft". */
+export const passionPhoto: Artwork = {
+  slug: "konfeti",
+  title: "Konfeti",
+  meta: "Fotografie",
+  alt: "Ein schwarzer Opel Vectra B Caravan mit goldenen Felgen und dem Kennzeichen \u201eKONFETI\u201c steht in Dreiviertelansicht von vorn auf einem Sandweg zwischen D\u00fcnengras.",
+  width: 1536,
+  height: 1024,
+  aspect: 1.5,
+  src: "/photo/konfeti-1440.webp",
+  srcSet: "/photo/konfeti-960.webp 960w, /photo/konfeti-1440.webp 1440w",
+};
 
 /** The sheet that carries the contact panel. */
 export const contactPhoto: Artwork = {
