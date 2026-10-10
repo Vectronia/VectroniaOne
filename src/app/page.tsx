@@ -121,17 +121,17 @@ const PRICE_LEAD =
   "Der Preis h\u00e4ngt an zwei Dingen: wie gro\u00df das Blatt wird und womit darauf gearbeitet wird. Alles andere besprechen wir vorher.";
 
 /** The media a sheet can be worked in — the table's columns. */
-const PRICE_MEDIA = ["Aquarell", "\u00d6lfarbe", "Bleistift s/w"];
+const PRICE_MEDIA = ["Aquarell", "\u00d6lpastellkreide", "Bleistift s/w"];
 
 const PRICE_SIZES = [
   { label: "DIN A4", prices: [70, 85, 80] },
   { label: "DIN A3", prices: [120, 145, 140] },
-  { label: "DIN A2", prices: [250, 300, 300] },
+  { label: "DIN A2", prices: [250, 310, 300] },
   { label: "DIN A1", prices: [380, 470, 450] },
 ];
 
 const PRICE_EXTRAS = [
-  { label: "pro weiterem Fahrzeug", prices: [50, 65, 60] },
+  { label: "pro weiterer abgebildeter Perspektive", prices: [50, 65, 60] },
   { label: "mit Hintergrund", prices: [30, 50, 40] },
 ];
 
