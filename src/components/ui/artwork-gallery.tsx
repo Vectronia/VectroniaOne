@@ -203,22 +203,62 @@ export function ArtworkGallery({ label, artworks, id, className }: ArtworkGaller
          * Announced politely: stepping changes the picture, and without this a
          * reader who cannot see it is told nothing at all.
          */}
-        <figcaption aria-live="polite" className="mt-8 text-center">
-          <span className="block font-display text-xl text-rose-200 italic md:text-2xl">
-            {active.title}
-          </span>
-          <span className="mt-1 block text-xs tracking-[0.18em] text-fg-muted uppercase">
-            {active.meta}
-          </span>
-          {active.format && (
-            <span className="mt-1 block text-[0.6875rem] tracking-[0.14em] text-fg-muted/70 uppercase">
-              {active.format}
-            </span>
-          )}
-          <span className="mt-4 block text-xs tracking-[0.18em] text-fg-muted/60 tabular-nums">
-            {index + 1} / {artworks.length}
-          </span>
-        </figcaption>
+        {/*
+         * The caption keeps one height for the whole set, so stepping does not
+         * shift the strip below it.
+         *
+         * Measured, it moved by 21px on a desktop and 49px on a phone: not
+         * every sheet carries a size line, and on a narrow screen the title
+         * and the technique wrap to a second line on some and not on others.
+         *
+         * The height is taken from the set rather than reserved in lines: all
+         * the captions are laid in one grid cell, the inactive ones hidden but
+         * still measured, so the cell is as tall as the tallest of them and no
+         * taller — at whatever width the reader happens to be at. Reserving
+         * two lines each would have meant a line of air under every short
+         * caption on a wide screen.
+         */}
+        <div className="mt-8 grid">
+          {artworks.map((art, i) => (
+            <figcaption
+              key={art.slug}
+              // The whole stack is for the eye. What is spoken is the one
+              // steady region below, because a live region that is created
+              // anew on every step is not reliably announced at all.
+              aria-hidden
+              className={cn(
+                "col-start-1 row-start-1 text-center",
+                i !== index && "invisible",
+              )}
+            >
+              <span className="block font-display text-xl text-rose-200 italic md:text-2xl">
+                {art.title}
+              </span>
+              <span className="mt-1 block text-xs tracking-[0.18em] text-fg-muted uppercase">
+                {art.meta}
+              </span>
+              {art.format && (
+                <span className="mt-1 block text-[0.6875rem] tracking-[0.14em] text-fg-muted/70 uppercase">
+                  {art.format}
+                </span>
+              )}
+              <span className="mt-4 block text-xs tracking-[0.18em] text-fg-muted/60 tabular-nums">
+                {i + 1} / {artworks.length}
+              </span>
+            </figcaption>
+          ))}
+        </div>
+
+        {/*
+         * The same words, for a reader who cannot see the stage. One element
+         * that stays put and only changes its text, which is what a live
+         * region needs to be in order to speak.
+         */}
+        <p aria-live="polite" className="sr-only">
+          {`${active.title}. ${active.meta}.${active.format ? ` ${active.format}.` : ""} ${
+            index + 1
+          } von ${artworks.length}.`}
+        </p>
 
         {/*
          * The rest of the set. It scrolls sideways rather than wrapping into
