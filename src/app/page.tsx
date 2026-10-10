@@ -4,6 +4,7 @@ import { BrandDrawer } from "@/components/ui/brand-drawer";
 import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { KineticGallery } from "@/components/ui/kinetic-gallery";
+import { PriceTable } from "@/components/ui/price-table";
 import { SiteFooter } from "@/components/ui/site-footer";
 import { StaticBackdrop } from "@/components/ui/static-backdrop";
 import { ContactForm } from "@/components/ui/contact-form";
@@ -114,6 +115,32 @@ const PROCESS_BODY = [
   </>,
 ];
 
+const PRICE_HEADER = "Was dein Unikat kostet";
+
+const PRICE_LEAD =
+  "Der Preis h\u00e4ngt an zwei Dingen: wie gro\u00df das Blatt wird und womit darauf gearbeitet wird. Alles andere besprechen wir vorher.";
+
+/** The media a sheet can be worked in — the table's columns. */
+const PRICE_MEDIA = ["Aquarell", "\u00d6lfarbe", "Bleistift s/w"];
+
+const PRICE_SIZES = [
+  { label: "DIN A4", prices: [70, 85, 80] },
+  { label: "DIN A3", prices: [120, 145, 140] },
+  { label: "DIN A2", prices: [250, 300, 300] },
+  { label: "DIN A1", prices: [380, 470, 450] },
+];
+
+const PRICE_EXTRAS = [
+  { label: "pro weiterem Fahrzeug", prices: [50, 65, 60] },
+  { label: "mit Hintergrund", prices: [30, 50, 40] },
+];
+
+const PRICE_INCLUDED = [
+  "In jedem Preis enthalten: drei Vorskizzen, an denen wir Bildaufbau und Farbgebung gemeinsam festlegen, bevor ich das Blatt anlege.",
+  "Gearbeitet wird auf einem Malgrund, der zum Medium passt \u2014 das ist im Preis schon drin.",
+  "Auf Wunsch Steinpapier oder Leinwand, gegen den Aufpreis der reinen Beschaffungskosten.",
+];
+
 const PASSION_HEADER = "Das Ausleben einer Leidenschaft";
 
 const PASSION_BODY = [
@@ -158,6 +185,7 @@ export default function Home() {
         links={[
           { label: "Start" },
           { label: "Werke", targetId: "werke" },
+          { label: "Preise", targetId: "preise" },
           { label: "Der Prozess eines Werkes", targetId: "prozess" },
           { label: "Das Ausleben einer Leidenschaft", targetId: "leidenschaft" },
           { label: "Kontakt", targetId: "kontakt" },
@@ -207,6 +235,23 @@ export default function Home() {
       />
 
       <KineticGallery id="werke" label="Werke" artworks={galleryArtworks} />
+
+      <PriceTable
+        id="preise"
+        header={PRICE_HEADER}
+        lead={PRICE_LEAD}
+        media={PRICE_MEDIA}
+        sizes={PRICE_SIZES}
+        extras={PRICE_EXTRAS}
+        included={PRICE_INCLUDED}
+      >
+        Möglich ist weit mehr, als diese Tabelle fasst — sieh dich in den Werken um, was dir
+        gefällt. Schreib mir über das Formular im{" "}
+        <a href="#kontakt" className="copy-link">
+          Kontakt
+        </a>
+        , und wir machen daraus dein Unikat.
+      </PriceTable>
 
       {/*
        * The same photograph that closes the gallery, shown here in the position
