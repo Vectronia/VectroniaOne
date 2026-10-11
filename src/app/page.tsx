@@ -139,10 +139,7 @@ const PRICE_INCLUDED = [
   "Auf Wunsch Steinpapier oder Leinwand, gegen den Aufpreis der reinen Beschaffungskosten.",
 ];
 
-const SALE_HEADER = "Zu haben";
-
-const SALE_LEAD =
-  "Diese Bl\u00e4tter gibt es aus meiner Sammlung abzugeben \u2014 fertig gezeichnet, gerahmt wird nach deinem Geschmack. Schreib mir, wenn eines davon deins werden soll.";
+const SALE_HEADER = "Zum Verkauf";
 
 const PASSION_HEADER = "Das Ausleben einer Leidenschaft";
 
@@ -189,7 +186,7 @@ export default function Home() {
           { label: "Start" },
           { label: "Werke", targetId: "werke" },
           { label: "Preise", targetId: "preise" },
-          { label: "Zu haben", targetId: "verkauf" },
+          { label: "Zum Verkauf", targetId: "verkauf" },
           { label: "Der Prozess eines Werkes", targetId: "prozess" },
           { label: "Das Ausleben einer Leidenschaft", targetId: "leidenschaft" },
           { label: "Kontakt", targetId: "kontakt" },
@@ -258,9 +255,8 @@ export default function Home() {
 
       <ArtworkGallery
         id="verkauf"
-        label="Zu haben"
+        label={SALE_HEADER}
         header={SALE_HEADER}
-        lead={SALE_LEAD}
         artworks={saleArtworks}
       />
 

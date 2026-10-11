@@ -315,14 +315,19 @@ export function HeroStage({
           <div
             // The picture keeps its own proportions everywhere — it is a
             // photograph of a person, and squaring it to the text's shape
-            // crops her rather than resizing her. Beside the sentence it is
-            // set to the foot of the text instead of being centred against
-            // it, so the two end on the same line.
+            // crops her rather than resizing her.
+            //
+            // Beside the sentence it sits in the copy's row rather than
+            // across both, and starts where the copy starts: its top edge
+            // meets the top of the first line's letters, not the heading
+            // above them. That edge is exact rather than close, because the
+            // copy carries `text-box-trim` — its box top is the cap line, not
+            // the top of the leading above it.
             //
             // The proportions ride in a custom property rather than an inline
             // style: a style beats a class, so written inline they could not
             // be varied by breakpoint if that is ever wanted.
-            className="flex min-h-0 w-full shrink justify-center aspect-[var(--shot)] lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-end"
+            className="flex min-h-0 w-full shrink justify-center aspect-[var(--shot)] lg:col-start-1 lg:row-start-2 lg:self-start"
             style={{ "--shot": aspect } as React.CSSProperties}
           >
             <div className="relative h-full max-w-full overflow-hidden rounded-[12px] aspect-[var(--shot)] md:rounded-[16px]">

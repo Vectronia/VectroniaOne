@@ -10,8 +10,6 @@ export type ArtworkGalleryProps = {
   label: string;
   /** Shown above the stage. The works gallery runs without one. */
   header?: string;
-  /** A line under the heading, where one is wanted. */
-  lead?: string;
   /** Shown in this order, first to last. */
   artworks: Artwork[];
   id?: string;
@@ -63,7 +61,6 @@ function Arrow({ back }: { back?: boolean }) {
 export function ArtworkGallery({
   label,
   header,
-  lead,
   artworks,
   id,
   className,
@@ -152,12 +149,6 @@ export function ArtworkGallery({
             {header}
           </h2>
         )}
-        {lead && (
-          <p className="body-copy mx-auto -mt-6 mb-12 max-w-[62ch] text-center text-fg-muted [text-align-last:center]">
-            {lead}
-          </p>
-        )}
-
         {/*
          * The arrows flank the stage where there is room and lie over its
          * edges where there is not. Kept outside on a phone they took 112 of
