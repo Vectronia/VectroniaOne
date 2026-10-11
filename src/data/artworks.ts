@@ -26,6 +26,8 @@ export type Artwork = ArtworkCopy & {
   aspect: number;
   src: string;
   srcSet: string;
+  /** Asking price in euro. Only the sheets that are actually for sale carry one. */
+  price?: number;
 };
 
 const COPY: Record<string, ArtworkCopy> = {
@@ -268,3 +270,22 @@ export const contactPhoto: Artwork = {
 
 /** Everything else, in reading order, with the photograph pinned to the end. */
 export const galleryArtworks = ORDER.map(build);
+
+/**
+ * The sheets from the collection that are to be had, with what they cost.
+ *
+ * They stay in the gallery above as well: that one shows the work, this one
+ * shows what is available, and a drawing is no less part of the portfolio for
+ * being for sale. The order is the one they are listed in here.
+ */
+const FOR_SALE: Record<string, number> = {
+  l: 165,
+  tinte3: 140,
+  tinte2: 140,
+  tinte1: 140,
+};
+
+export const saleArtworks: Artwork[] = Object.entries(FOR_SALE).map(([slug, price]) => ({
+  ...build(slug),
+  price,
+}));

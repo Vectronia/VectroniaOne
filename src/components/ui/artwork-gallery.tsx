@@ -6,8 +6,12 @@ import { cn } from "@/lib/utils";
 import type { Artwork } from "@/data/artworks";
 
 export type ArtworkGalleryProps = {
-  /** Names the region; the gallery carries no visible heading. */
+  /** Names the region. Used as the accessible name when no heading is shown. */
   label: string;
+  /** Shown above the stage. The works gallery runs without one. */
+  header?: string;
+  /** A line under the heading, where one is wanted. */
+  lead?: string;
   /** Shown in this order, first to last. */
   artworks: Artwork[];
   id?: string;
@@ -56,7 +60,14 @@ function Arrow({ back }: { back?: boolean }) {
  * The strip below is dimmed so the stage stays the thing being looked at; the
  * current one is the only one at full strength, which is also what marks it.
  */
-export function ArtworkGallery({ label, artworks, id, className }: ArtworkGalleryProps) {
+export function ArtworkGallery({
+  label,
+  header,
+  lead,
+  artworks,
+  id,
+  className,
+}: ArtworkGalleryProps) {
   const [index, setIndex] = useState(0);
   const stripRef = useRef<HTMLUListElement>(null);
   const thumbRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -127,11 +138,26 @@ export function ArtworkGallery({ label, artworks, id, className }: ArtworkGaller
   return (
     <section
       id={id}
-      aria-label={label}
+      aria-label={header ? undefined : label}
+      aria-labelledby={header && id ? `${id}-header` : undefined}
       onKeyDown={onKeyDown}
       className={cn("relative w-full px-6 py-20 lg:py-24", className)}
     >
       <div className="mx-auto max-w-6xl">
+        {header && (
+          <h2
+            id={id ? `${id}-header` : undefined}
+            className="text-metal font-display mb-12 text-center text-3xl font-semibold text-balance italic md:text-4xl lg:text-5xl"
+          >
+            {header}
+          </h2>
+        )}
+        {lead && (
+          <p className="body-copy mx-auto -mt-6 mb-12 max-w-[62ch] text-center text-fg-muted [text-align-last:center]">
+            {lead}
+          </p>
+        )}
+
         {/*
          * The arrows flank the stage where there is room and lie over its
          * edges where there is not. Kept outside on a phone they took 112 of
@@ -242,6 +268,11 @@ export function ArtworkGallery({ label, artworks, id, className }: ArtworkGaller
                   {art.format}
                 </span>
               )}
+              {art.price !== undefined && (
+                <span className="mt-3 block font-display text-lg text-brand-amber italic tabular-nums">
+                  {art.price} €
+                </span>
+              )}
               <span className="mt-4 block text-xs tracking-[0.18em] text-fg-muted/60 tabular-nums">
                 {i + 1} / {artworks.length}
               </span>
@@ -255,9 +286,9 @@ export function ArtworkGallery({ label, artworks, id, className }: ArtworkGaller
          * region needs to be in order to speak.
          */}
         <p aria-live="polite" className="sr-only">
-          {`${active.title}. ${active.meta}.${active.format ? ` ${active.format}.` : ""} ${
-            index + 1
-          } von ${artworks.length}.`}
+          {`${active.title}. ${active.meta}.${active.format ? ` ${active.format}.` : ""}${
+            active.price !== undefined ? ` ${active.price} Euro.` : ""
+          } ${index + 1} von ${artworks.length}.`}
         </p>
 
         {/*

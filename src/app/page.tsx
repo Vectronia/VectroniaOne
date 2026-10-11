@@ -12,6 +12,7 @@ import {
   contactPhoto,
   galleryArtworks,
   heroArtwork,
+  saleArtworks,
   passionPhoto,
   portraitPhoto,
   processPhoto,
@@ -138,6 +139,11 @@ const PRICE_INCLUDED = [
   "Auf Wunsch Steinpapier oder Leinwand, gegen den Aufpreis der reinen Beschaffungskosten.",
 ];
 
+const SALE_HEADER = "Zu haben";
+
+const SALE_LEAD =
+  "Diese Bl\u00e4tter gibt es aus meiner Sammlung abzugeben \u2014 fertig gezeichnet, gerahmt wird nach deinem Geschmack. Schreib mir, wenn eines davon deins werden soll.";
+
 const PASSION_HEADER = "Das Ausleben einer Leidenschaft";
 
 const PASSION_BODY = [
@@ -183,6 +189,7 @@ export default function Home() {
           { label: "Start" },
           { label: "Werke", targetId: "werke" },
           { label: "Preise", targetId: "preise" },
+          { label: "Zu haben", targetId: "verkauf" },
           { label: "Der Prozess eines Werkes", targetId: "prozess" },
           { label: "Das Ausleben einer Leidenschaft", targetId: "leidenschaft" },
           { label: "Kontakt", targetId: "kontakt" },
@@ -248,6 +255,14 @@ export default function Home() {
         </a>
         , und wir machen daraus dein Unikat.
       </PriceTable>
+
+      <ArtworkGallery
+        id="verkauf"
+        label="Zu haben"
+        header={SALE_HEADER}
+        lead={SALE_LEAD}
+        artworks={saleArtworks}
+      />
 
       {/*
        * The same photograph that closes the gallery, shown here in the position
