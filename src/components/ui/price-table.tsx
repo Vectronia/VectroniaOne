@@ -20,8 +20,6 @@ export type PriceTableProps = {
   /** What can be added on top, priced the same way. */
   extras: PriceRow[];
   header: string;
-  /** The lead paragraph, above the table. */
-  lead: string;
   /** What every price already contains. */
   included: string[];
   /** The closing line; `children` carries the link out of it. */
@@ -61,7 +59,6 @@ export function PriceTable({
   sizes,
   extras,
   header,
-  lead,
   included,
   children,
   id,
@@ -114,17 +111,13 @@ export function PriceTable({
           {header}
         </h2>
 
-        <p className="body-copy mx-auto mt-8 max-w-[62ch] text-center text-fg-muted [text-align-last:center]">
-          {lead}
-        </p>
-
         {/*
          * The table scrolls sideways only if it has to. Four columns of short
          * figures fit a phone, but a long medium name or a large text setting
          * can push past it, and a table that overflows its section silently is
          * worse than one the reader can push along.
          */}
-        <div className="mt-12 overflow-x-auto">
+        <div className="mt-14 overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm sm:text-base">
             <caption className="sr-only">
               Preise nach Format und Medium, jeweils in Euro

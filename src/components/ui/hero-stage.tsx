@@ -313,12 +313,17 @@ export function HeroStage({
            * content height at all.
            */}
           <div
-            className="flex min-h-0 w-full shrink justify-center lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-center"
-            style={{ aspectRatio: aspect }}
+            // Beside the sentence the picture takes the height of the whole
+            // text — heading and copy — instead of standing centred against
+            // it with air above and below. In a column, above the text, it
+            // keeps its own proportions and may shrink; the custom property
+            // carries them so the rule can be dropped at lg, which an inline
+            // aspect-ratio could not be, since a style beats a class.
+            className="flex min-h-0 w-full shrink justify-center aspect-[var(--shot)] lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:aspect-auto lg:self-stretch"
+            style={{ "--shot": aspect } as React.CSSProperties}
           >
             <div
-              className="relative h-full max-w-full overflow-hidden rounded-[12px] md:rounded-[16px]"
-              style={{ aspectRatio: aspect }}
+              className="relative h-full max-w-full overflow-hidden rounded-[12px] aspect-[var(--shot)] md:rounded-[16px] lg:aspect-auto lg:w-full"
             >
               <div
                 ref={posterRef}

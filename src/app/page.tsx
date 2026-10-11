@@ -117,9 +117,6 @@ const PROCESS_BODY = [
 
 const PRICE_HEADER = "Was dein Unikat kostet";
 
-const PRICE_LEAD =
-  "Der Preis h\u00e4ngt an zwei Dingen: wie gro\u00df das Blatt wird und womit darauf gearbeitet wird. Alles andere besprechen wir vorher.";
-
 /** The media a sheet can be worked in — the table's columns. */
 const PRICE_MEDIA = ["Aquarell", "\u00d6lpastellkreide", "Bleistift s/w"];
 
@@ -136,7 +133,7 @@ const PRICE_EXTRAS = [
 ];
 
 const PRICE_INCLUDED = [
-  "In jedem Preis enthalten: drei Vorskizzen, an denen wir Bildaufbau und Farbgebung gemeinsam festlegen.",
+  "In jedem Preis enthalten: drei Vorskizzen, an denen wir Bildaufbau, Farbgebung und Stilrichtung gemeinsam festlegen.",
   "Gearbeitet wird auf einem Malgrund, der zum Medium passt \u2014 das ist im Preis schon drin.",
   "Auf Wunsch Steinpapier oder Leinwand, gegen den Aufpreis der reinen Beschaffungskosten.",
 ];
@@ -239,7 +236,6 @@ export default function Home() {
       <PriceTable
         id="preise"
         header={PRICE_HEADER}
-        lead={PRICE_LEAD}
         media={PRICE_MEDIA}
         sizes={PRICE_SIZES}
         extras={PRICE_EXTRAS}
