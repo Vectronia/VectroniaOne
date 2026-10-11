@@ -313,18 +313,19 @@ export function HeroStage({
            * content height at all.
            */}
           <div
-            // Beside the sentence the picture takes the height of the whole
-            // text — heading and copy — instead of standing centred against
-            // it with air above and below. In a column, above the text, it
-            // keeps its own proportions and may shrink; the custom property
-            // carries them so the rule can be dropped at lg, which an inline
-            // aspect-ratio could not be, since a style beats a class.
-            className="flex min-h-0 w-full shrink justify-center aspect-[var(--shot)] lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:aspect-auto lg:self-stretch"
+            // The picture keeps its own proportions everywhere — it is a
+            // photograph of a person, and squaring it to the text's shape
+            // crops her rather than resizing her. Beside the sentence it is
+            // set to the foot of the text instead of being centred against
+            // it, so the two end on the same line.
+            //
+            // The proportions ride in a custom property rather than an inline
+            // style: a style beats a class, so written inline they could not
+            // be varied by breakpoint if that is ever wanted.
+            className="flex min-h-0 w-full shrink justify-center aspect-[var(--shot)] lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-end"
             style={{ "--shot": aspect } as React.CSSProperties}
           >
-            <div
-              className="relative h-full max-w-full overflow-hidden rounded-[12px] aspect-[var(--shot)] md:rounded-[16px] lg:aspect-auto lg:w-full"
-            >
+            <div className="relative h-full max-w-full overflow-hidden rounded-[12px] aspect-[var(--shot)] md:rounded-[16px]">
               <div
                 ref={posterRef}
                 className="absolute inset-0 shadow-[0_20px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
