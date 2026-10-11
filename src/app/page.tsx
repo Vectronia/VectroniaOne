@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { BrandDrawer } from "@/components/ui/brand-drawer";
+import { HeroSeam } from "@/components/ui/hero-seam";
 import { HeroStage } from "@/components/ui/hero-stage";
 import { IntroPanel } from "@/components/ui/intro-panel";
 import { ArtworkGallery } from "@/components/ui/artwork-gallery";
@@ -234,6 +235,8 @@ export default function Home() {
           />
         }
       />
+
+      <HeroSeam />
 
       <ArtworkGallery id="werke" label="Werke" artworks={galleryArtworks} />
 

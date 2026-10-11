@@ -277,12 +277,16 @@ export function HeroStage({
          * the 667 it has, and the picture is the only part that can give. It
          * crops rather than pushing the sentence off the screen.
          *
+         * Beside the picture, the step from the heading to the copy is the
+         * 48px the other sections use — it was 20px, which read as a
+         * different kind of heading rather than as the same one.
+         *
          * The rhythm between the three is the 40px the other sections use,
          * but tied to the viewport height rather than fixed, so a short
          * screen spends its slack on the photograph instead of on air. At
          * 844 tall it is exactly 40px; it gives up 8px of that by 667.
          */}
-        <div className="relative z-20 flex h-full w-full max-w-6xl flex-col items-center justify-center gap-y-[clamp(1.25rem,4.74vh,2.5rem)] px-6 py-[clamp(1.25rem,4.74vh,2.5rem)] lg:grid lg:h-auto lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-x-16 lg:gap-y-5 lg:py-0">
+        <div className="relative z-20 flex h-full w-full max-w-6xl flex-col items-center justify-center gap-y-[clamp(1.25rem,4.74vh,2.5rem)] px-6 py-[clamp(1.25rem,4.74vh,2.5rem)] lg:grid lg:h-auto lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-x-16 lg:gap-y-12 lg:py-0">
           {/*
            * Heading, picture, text — the order every other section reads in,
            * and on a phone that is the order on the screen. Beside the picture

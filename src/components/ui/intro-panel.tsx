@@ -149,20 +149,6 @@ export function IntroPanel({
       className={cn("relative w-full overflow-x-clip px-6 py-24 lg:py-32", className)}
     >
       {/*
-       * The hero ends on its accent colour while the backdrop below starts on
-       * navy. This blends the two rather than leaving a hard edge.
-       */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[38vh]"
-        style={{
-          // Starts at the hero's composited bottom edge — its accent sits under
-          // a 30% black wash, so the raw teal would read as a step, not a blend.
-          background:
-            "linear-gradient(to bottom, color-mix(in srgb, var(--color-brand-teal) 56%, #000) 0%, color-mix(in srgb, var(--color-brand-teal) 26%, transparent) 45%, transparent 100%)",
-        }}
-      />
-      {/*
        * Two rows on wide viewports: the heading sits alone above, and the
        * artwork shares the lower row with the body copy so the two stretch to
        * the same height — the picture then starts on the first line of text and
