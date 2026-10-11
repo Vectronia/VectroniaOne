@@ -117,7 +117,7 @@ const PROCESS_BODY = [
   </>,
 ];
 
-const PRICE_HEADER = "Was dein Unikat kostet";
+const PRICE_HEADER = "Was dein Unikat dir wert sein darf";
 
 /** The media a sheet can be worked in — the table's columns. */
 const PRICE_MEDIA = ["Aquarell", "\u00d6lpastellkreide", "Bleistift s/w"];
