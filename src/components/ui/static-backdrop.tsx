@@ -16,8 +16,16 @@ gsap.registerPlugin(ScrollTrigger);
  */
 const FIELD_COLORS = ["#e5ad43", "#11383b", "#191c28"];
 
-/** Field drift with nobody scrolling — just enough to not read as a still. */
-const IDLE_SPEED = 0.02;
+/**
+ * Field drift with nobody scrolling.
+ *
+ * 0.02 was meant to be "just enough to not read as a still" and was not:
+ * measured on a 260px patch it moved 0.93 steps every two seconds, which is
+ * under what the eye picks up in a smooth gradient — it was a still. 0.12
+ * moves 4.74 steps in the same two seconds: awake, and still slow enough that
+ * nothing competes with the work on top of it.
+ */
+const IDLE_SPEED = 0.12;
 /** Field time added per 1000px scrolled. */
 const SCROLL_BOOST = 0.55;
 
